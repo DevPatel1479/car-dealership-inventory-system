@@ -1,9 +1,10 @@
 import { describe, it, expect, jest } from '@jest/globals';
-import { AuthService } from '../../../src/services/auth.service';
+import { AuthService } from '../../../src/services/auth.service.js';
 
 describe('AuthService - User Registration', () => {
   it('should create a new user account when valid registration details are provided', async () => {
     const userRepository = {
+      findByEmail: jest.fn().mockResolvedValue(null),
       create: jest.fn().mockResolvedValue({
         name: 'John Do',
         email: 'john@example.com',
@@ -40,7 +41,7 @@ describe('AuthService - User Registration', () => {
 
       create: jest.fn(),
     };
-    
+
     const authService = new AuthService(userRepository);
 
     await expect(

@@ -10,7 +10,10 @@ export interface UserResponse {
 }
 
 export interface IUserRepository {
-  create(
-    userData: RegisterUserInput
-  ): Promise<UserResponse>;
+  findByEmail(
+    email : string
+  ) : Promise<UserResponse | null>;
+
+  create(userData: RegisterUserInput): Promise<UserResponse>;
+  
 }
