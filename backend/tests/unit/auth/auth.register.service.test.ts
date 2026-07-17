@@ -1,20 +1,9 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
 import { AuthService } from '../../../src/services/auth.service.js';
-import type {
-  IUserRepository,
-  UserResponse,
-} from '../../../src/types/auth.types.js';
 
-type MockUserRepository = {
-  findByEmail: jest.MockedFunction<IUserRepository['findByEmail']>;
-  create: jest.MockedFunction<IUserRepository['create']>;
-};
+import { createMockUserRepository } from './test-helpers/auth-test.factory.js';
 
-const createMockUserRepository = (): MockUserRepository => ({
-  findByEmail: jest.fn<IUserRepository['findByEmail']>(),
-  create: jest.fn<IUserRepository['create']>(),
-});
 
 describe('AuthService - User Registration', () => {
   it('should create a new user account when valid registration details are provided', async () => {
