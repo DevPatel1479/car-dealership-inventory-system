@@ -5,13 +5,16 @@ describe('AuthService - User Registration', () => {
   it('should create a new user account when valid registration details are provided', async () => {
     const userRepository = {
       findByEmail: jest.fn().mockResolvedValue(null),
+
       create: jest.fn().mockResolvedValue({
         name: 'John Do',
         email: 'john@example.com',
       }),
     };
 
+
     const authService = new AuthService(userRepository);
+
 
     const user = await authService.register({
       name: 'John Do',
@@ -19,17 +22,21 @@ describe('AuthService - User Registration', () => {
       password: 'password123',
     });
 
+
     expect(user).toEqual({
       name: 'John Do',
       email: 'john@example.com',
     });
 
-    expect(userRepository.create).toHaveBeenCalledWith({
-      name: 'John Do',
-      email: 'john@example.com',
-      password: 'password123',
-    });
+
+    expect(userRepository.create)
+.toHaveBeenCalledWith({
+  name:"John Do",
+  email:"john@example.com",
+  password:"password123"
+});
   });
+
 
   it('should reject user registration when email address is already registered', async () => {
     const userRepository = {
@@ -42,7 +49,10 @@ describe('AuthService - User Registration', () => {
       create: jest.fn(),
     };
 
-    const authService = new AuthService(userRepository);
+
+    const authService =
+      new AuthService(userRepository);
+
 
     await expect(
       authService.register({
@@ -50,10 +60,58 @@ describe('AuthService - User Registration', () => {
         email: 'john@example.com',
         password: 'password123',
       }),
-    ).rejects.toThrow('User already exists');
+    )
+    .rejects
+    .toThrow('User already exists');
 
-    expect(userRepository.findByEmail).toHaveBeenCalledWith('john@example.com');
 
-    expect(userRepository.create).not.toHaveBeenCalled();
+    expect(
+      userRepository.findByEmail
+    )
+    .toHaveBeenCalledWith(
+      'john@example.com'
+    );
+
+
+    expect(
+      userRepository.create
+    )
+    .not
+    .toHaveBeenCalled();
   });
+
+
+  it("should hash the password before creating a new user account", async()=>{
+
+ const userRepository = {
+   findByEmail: jest.fn().mockResolvedValue(null),
+
+   create: jest.fn().mockResolvedValue({
+      name:"John Do",
+      email:"john@example.com"
+   })
+ };
+
+
+ const authService =
+    new AuthService(userRepository);
+
+
+ await authService.register({
+    name:"John Do",
+    email:"john@example.com",
+    password:"password123"
+ });
+
+
+ expect(userRepository.create)
+ .toHaveBeenCalledWith(
+    expect.objectContaining({
+       password: expect.not.stringContaining(
+          "password123"
+       )
+    })
+ );
+
+});
 });
