@@ -22,4 +22,10 @@ export const registrationSchema = z
         message: 'Invalid email address',
       });
     }
+    if (data.password.length < 8) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Password must be at least 8 characters long',
+      });
+    }
   });
