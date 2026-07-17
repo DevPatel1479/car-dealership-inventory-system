@@ -5,7 +5,7 @@ describe('AuthService - User Registration', () => {
   it('should create a new user account when valid registration details are provided', async () => {
     const userRepository = {
       findByEmail: jest.fn().mockResolvedValue(null),
-      
+
       create: jest.fn().mockResolvedValue({
         name: 'John Do',
         email: 'john@example.com',
@@ -25,14 +25,13 @@ describe('AuthService - User Registration', () => {
       email: 'john@example.com',
     });
 
-    expect(userRepository.create)
-  .toHaveBeenCalledWith(
-    expect.objectContaining({
-      name: 'John Do',
-      email: 'john@example.com',
-      password: expect.any(String),
-    }),
-  );
+    expect(userRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'John Do',
+        email: 'john@example.com',
+        password: expect.any(String),
+      }),
+    );
   });
 
   it('should reject user registration when email address is already registered', async () => {
@@ -47,7 +46,7 @@ describe('AuthService - User Registration', () => {
     };
 
     const authService = new AuthService(userRepository);
-    
+
     await expect(
       authService.register({
         name: 'Another User',
@@ -85,4 +84,26 @@ describe('AuthService - User Registration', () => {
       }),
     );
   });
+
+  it('should reject registration when required registration details are missing', async () => {
+  const userRepository = {
+    findByEmail: jest.fn(),
+    create: jest.fn(),
+  };
+
+  const authService = new AuthService(userRepository);
+
+  await expect(
+    authService.register({
+      name: '',
+      email: '',
+      password: '',
+    }),
+  ).rejects.toThrow('User registration details are required');
+
+  expect(userRepository.findByEmail).not.toHaveBeenCalled();
+  expect(userRepository.create).not.toHaveBeenCalled();
+});
+
+  
 });
