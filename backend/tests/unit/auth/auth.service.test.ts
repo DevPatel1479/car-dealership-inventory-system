@@ -1,16 +1,31 @@
-import { describe, it, expect, jest } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals';
+
 import { AuthService } from '../../../src/services/auth.service.js';
+import type {
+  IUserRepository,
+  UserResponse,
+} from '../../../src/types/auth.types.js';
+
+type MockUserRepository = {
+  findByEmail: jest.MockedFunction<IUserRepository['findByEmail']>;
+  create: jest.MockedFunction<IUserRepository['create']>;
+};
+
+const createMockUserRepository = (): MockUserRepository => ({
+  findByEmail: jest.fn<IUserRepository['findByEmail']>(),
+  create: jest.fn<IUserRepository['create']>(),
+});
 
 describe('AuthService - User Registration', () => {
   it('should create a new user account when valid registration details are provided', async () => {
-    const userRepository = {
-      findByEmail: jest.fn().mockResolvedValue(null),
+    const userRepository = createMockUserRepository();
 
-      create: jest.fn().mockResolvedValue({
-        name: 'John Do',
-        email: 'john@example.com',
-      }),
-    };
+    userRepository.findByEmail.mockResolvedValue(null);
+
+    userRepository.create.mockResolvedValue({
+      name: 'John Do',
+      email: 'john@example.com',
+    });
 
     const authService = new AuthService(userRepository);
 
@@ -35,15 +50,12 @@ describe('AuthService - User Registration', () => {
   });
 
   it('should reject user registration when email address is already registered', async () => {
-    const userRepository = {
-      findByEmail: jest.fn().mockResolvedValue({
-        id: 'user-id-1',
-        name: 'John Do',
-        email: 'john@example.com',
-      }),
+    const userRepository = createMockUserRepository();
 
-      create: jest.fn(),
-    };
+    userRepository.findByEmail.mockResolvedValue({
+      name: 'John Do',
+      email: 'john@example.com',
+    });
 
     const authService = new AuthService(userRepository);
 
@@ -55,20 +67,22 @@ describe('AuthService - User Registration', () => {
       }),
     ).rejects.toThrow('User already exists');
 
-    expect(userRepository.findByEmail).toHaveBeenCalledWith('john@example.com');
+    expect(userRepository.findByEmail).toHaveBeenCalledWith(
+      'john@example.com',
+    );
 
     expect(userRepository.create).not.toHaveBeenCalled();
   });
 
   it('should hash the password before creating a new user account', async () => {
-    const userRepository = {
-      findByEmail: jest.fn().mockResolvedValue(null),
+    const userRepository = createMockUserRepository();
 
-      create: jest.fn().mockResolvedValue({
-        name: 'John Do',
-        email: 'john@example.com',
-      }),
-    };
+    userRepository.findByEmail.mockResolvedValue(null);
+
+    userRepository.create.mockResolvedValue({
+      name: 'John Do',
+      email: 'john@example.com',
+    });
 
     const authService = new AuthService(userRepository);
 
@@ -86,10 +100,7 @@ describe('AuthService - User Registration', () => {
   });
 
   it('should reject registration when required registration details are missing', async () => {
-    const userRepository = {
-      findByEmail: jest.fn(),
-      create: jest.fn(),
-    };
+    const userRepository = createMockUserRepository();
 
     const authService = new AuthService(userRepository);
 
@@ -106,23 +117,19 @@ describe('AuthService - User Registration', () => {
   });
 
   it('should reject registration when email format is invalid', async () => {
-  const userRepository = {
-    findByEmail: jest.fn(),
-    create: jest.fn(),
-  };
+    const userRepository = createMockUserRepository();
 
-  const authService = new AuthService(userRepository);
+    const authService = new AuthService(userRepository);
 
-  await expect(
-    authService.register({
-      name: 'John Do',
-      email: 'invalid-email',
-      password: 'password123',
-    }),
-  ).rejects.toThrow('Invalid email address');
+    await expect(
+      authService.register({
+        name: 'John Do',
+        email: 'invalid-email',
+        password: 'password123',
+      }),
+    ).rejects.toThrow('Invalid email address');
 
-  expect(userRepository.findByEmail).not.toHaveBeenCalled();
-
-  expect(userRepository.create).not.toHaveBeenCalled();
-});
+    expect(userRepository.findByEmail).not.toHaveBeenCalled();
+    expect(userRepository.create).not.toHaveBeenCalled();
+  });
 });
