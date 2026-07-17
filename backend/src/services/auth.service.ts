@@ -5,6 +5,8 @@ import type {
 } from '../types/auth.types.js';
 import { PasswordService } from './password.service.js';
 
+import { registrationSchema } from '../validators/registration.validator.js';
+
 export class AuthService {
   constructor(
     private readonly userRepository: IUserRepository,
@@ -12,12 +14,13 @@ export class AuthService {
   ) {}
 
   async register(userData: RegisterUserInput): Promise<UserResponse> {
-    if (
-      !userData.name.trim() ||
-      !userData.email.trim() ||
-      !userData.password.trim()
-    ) {
-      throw new Error('User registration details are required');
+    const validationResult = registrationSchema.safeParse(userData);
+    
+    if (!validationResult.success) {
+      throw new Error(
+        validationResult.error.issues.at(0)?.message ??
+          'Invalid registration details',
+      );
     }
 
     const existingUser = await this.userRepository.findByEmail(userData.email);
