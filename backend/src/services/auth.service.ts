@@ -12,6 +12,14 @@ export class AuthService {
   ) {}
 
   async register(userData: RegisterUserInput): Promise<UserResponse> {
+    if (
+      !userData.name.trim() ||
+      !userData.email.trim() ||
+      !userData.password.trim()
+    ) {
+      throw new Error('User registration details are required');
+    }
+
     const existingUser = await this.userRepository.findByEmail(userData.email);
 
     if (existingUser) {
@@ -19,12 +27,15 @@ export class AuthService {
     }
 
     const hashedPassword = await this.passwordService.hash(userData.password);
-    const user = await this.userRepository.create({
-      name: userData.name,
-      email: userData.email,
+
+    const createdUser = await this.userRepository.create({
+      ...userData,
       password: hashedPassword,
     });
 
+    return this.toUserResponse(createdUser);
+  }
+  private toUserResponse(user: { name: string; email: string }): UserResponse {
     return {
       name: user.name,
       email: user.email,

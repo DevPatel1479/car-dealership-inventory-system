@@ -86,24 +86,22 @@ describe('AuthService - User Registration', () => {
   });
 
   it('should reject registration when required registration details are missing', async () => {
-  const userRepository = {
-    findByEmail: jest.fn(),
-    create: jest.fn(),
-  };
+    const userRepository = {
+      findByEmail: jest.fn(),
+      create: jest.fn(),
+    };
 
-  const authService = new AuthService(userRepository);
+    const authService = new AuthService(userRepository);
 
-  await expect(
-    authService.register({
-      name: '',
-      email: '',
-      password: '',
-    }),
-  ).rejects.toThrow('User registration details are required');
+    await expect(
+      authService.register({
+        name: '',
+        email: '',
+        password: '',
+      }),
+    ).rejects.toThrow('User registration details are required');
 
-  expect(userRepository.findByEmail).not.toHaveBeenCalled();
-  expect(userRepository.create).not.toHaveBeenCalled();
-});
-
-  
+    expect(userRepository.findByEmail).not.toHaveBeenCalled();
+    expect(userRepository.create).not.toHaveBeenCalled();
+  });
 });
