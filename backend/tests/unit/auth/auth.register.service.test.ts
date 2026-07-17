@@ -2,7 +2,10 @@ import { describe, expect, it, jest } from '@jest/globals';
 
 import { AuthService } from '../../../src/services/auth.service.js';
 
-import { createMockUserRepository } from './test-helpers/auth-test.factory.js';
+import {
+  createMockUserRepository,
+  createMockUserResponse,
+} from './test-helpers/auth-test.factory.js';
 
 describe('AuthService - User Registration', () => {
   it('should create a new user account when valid registration details are provided', async () => {
@@ -10,13 +13,15 @@ describe('AuthService - User Registration', () => {
 
     userRepository.findByEmail.mockResolvedValue(null);
 
-    userRepository.create.mockResolvedValue({
-      name: 'John Do',
-      email: 'john@example.com',
-    });
+    userRepository.create.mockResolvedValue(
+      createMockUserResponse({
+        name: 'John Do',
+        email: 'john@example.com',
+      }),
+    );
 
     const authService = new AuthService(userRepository);
-
+    
     const user = await authService.register({
       name: 'John Do',
       email: 'john@example.com',
@@ -26,6 +31,7 @@ describe('AuthService - User Registration', () => {
     expect(user).toEqual({
       name: 'John Do',
       email: 'john@example.com',
+      role : "USER"
     });
 
     expect(userRepository.create).toHaveBeenCalledWith(
@@ -33,6 +39,7 @@ describe('AuthService - User Registration', () => {
         name: 'John Do',
         email: 'john@example.com',
         password: expect.any(String),
+        
       }),
     );
   });
@@ -40,10 +47,12 @@ describe('AuthService - User Registration', () => {
   it('should reject user registration when email address is already registered', async () => {
     const userRepository = createMockUserRepository();
 
-    userRepository.findByEmail.mockResolvedValue({
-      name: 'John Do',
-      email: 'john@example.com',
-    });
+    userRepository.findByEmail.mockResolvedValue(
+      createMockUserResponse({
+        name: 'John Do',
+        email: 'john@example.com',
+      }),
+    );
 
     const authService = new AuthService(userRepository);
 
@@ -65,10 +74,12 @@ describe('AuthService - User Registration', () => {
 
     userRepository.findByEmail.mockResolvedValue(null);
 
-    userRepository.create.mockResolvedValue({
-      name: 'John Do',
-      email: 'john@example.com',
-    });
+    userRepository.create.mockResolvedValue(
+      createMockUserResponse({
+        name: 'John Do',
+        email: 'john@example.com',
+      }),
+    );
 
     const authService = new AuthService(userRepository);
 
@@ -142,10 +153,12 @@ describe('AuthService - User Registration', () => {
 
     userRepository.findByEmail.mockResolvedValue(null);
 
-    userRepository.create.mockResolvedValue({
-      name: 'John Do',
-      email: 'john@example.com',
-    });
+    userRepository.create.mockResolvedValue(
+      createMockUserResponse({
+        name: 'John Do',
+        email: 'john@example.com',
+      }),
+    );
 
     const authService = new AuthService(userRepository);
 
