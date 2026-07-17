@@ -4,7 +4,6 @@ import { AuthService } from '../../../src/services/auth.service.js';
 
 import { createMockUserRepository } from './test-helpers/auth-test.factory.js';
 
-
 describe('AuthService - User Registration', () => {
   it('should create a new user account when valid registration details are provided', async () => {
     const userRepository = createMockUserRepository();
@@ -56,9 +55,7 @@ describe('AuthService - User Registration', () => {
       }),
     ).rejects.toThrow('User already exists');
 
-    expect(userRepository.findByEmail).toHaveBeenCalledWith(
-      'john@example.com',
-    );
+    expect(userRepository.findByEmail).toHaveBeenCalledWith('john@example.com');
 
     expect(userRepository.create).not.toHaveBeenCalled();
   });
@@ -119,6 +116,24 @@ describe('AuthService - User Registration', () => {
     ).rejects.toThrow('Invalid email address');
 
     expect(userRepository.findByEmail).not.toHaveBeenCalled();
+    expect(userRepository.create).not.toHaveBeenCalled();
+  });
+
+  it('should reject registration when password does not meet minimum length requirements', async () => {
+    const userRepository = createMockUserRepository();
+
+    const authService = new AuthService(userRepository);
+
+    await expect(
+      authService.register({
+        name: 'John Do',
+        email: 'john@example.com',
+        password: '12345',
+      }),
+    ).rejects.toThrow('Password must be at least 8 characters long');
+
+    expect(userRepository.findByEmail).not.toHaveBeenCalled();
+
     expect(userRepository.create).not.toHaveBeenCalled();
   });
 });
