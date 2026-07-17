@@ -1,9 +1,10 @@
 import type {
+  IUserRepository,
   RegisterUserInput,
   UserResponse,
 } from "../types/auth.types.js";
 
-export class UserRepository {
+export class UserRepository implements IUserRepository {
   async create(
     userData: RegisterUserInput
   ): Promise<UserResponse> {

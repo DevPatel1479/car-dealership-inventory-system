@@ -1,13 +1,12 @@
 import type {
+  IUserRepository,
   RegisterUserInput,
   UserResponse,
 } from "../types/auth.types.js";
 
-import { UserRepository } from "../repositories/user.repository.js";
-
 export class AuthService {
   constructor(
-    private readonly userRepository: UserRepository
+    private readonly userRepository: IUserRepository
   ) {}
 
   async register(

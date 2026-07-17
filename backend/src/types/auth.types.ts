@@ -8,3 +8,9 @@ export interface UserResponse {
   name: string;
   email: string;
 }
+
+export interface IUserRepository {
+  create(
+    userData: RegisterUserInput
+  ): Promise<UserResponse>;
+}
