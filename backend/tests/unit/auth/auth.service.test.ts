@@ -104,4 +104,25 @@ describe('AuthService - User Registration', () => {
     expect(userRepository.findByEmail).not.toHaveBeenCalled();
     expect(userRepository.create).not.toHaveBeenCalled();
   });
+
+  it('should reject registration when email format is invalid', async () => {
+  const userRepository = {
+    findByEmail: jest.fn(),
+    create: jest.fn(),
+  };
+
+  const authService = new AuthService(userRepository);
+
+  await expect(
+    authService.register({
+      name: 'John Do',
+      email: 'invalid-email',
+      password: 'password123',
+    }),
+  ).rejects.toThrow('Invalid email address');
+
+  expect(userRepository.findByEmail).not.toHaveBeenCalled();
+
+  expect(userRepository.create).not.toHaveBeenCalled();
+});
 });
