@@ -2,6 +2,7 @@ import type {
   IUserRepository,
   RegisterUserInput,
   UserResponse,
+  UserRole,
 } from '../types/auth.types.js';
 import { PasswordService } from './password.service.js';
 
@@ -42,20 +43,25 @@ export class AuthService {
     const createdUser = await this.userRepository.create({
       ...normalizedUserData,
       password: hashedPassword,
+      role: this.getDefaultUserRole(),
     });
 
     return this.toUserResponse(createdUser);
   }
 
+  private getDefaultUserRole(): UserRole {
+    return 'USER';
+  }
+
   // Returns only the fields that are safe to expose in the API response.
 
-  private toUserResponse(user: { name: string; email: string }): UserResponse {
+  private toUserResponse(user: UserResponse): UserResponse {
     return {
       name: user.name,
       email: user.email,
+      role: user.role,
     };
   }
-
   // Removes leading and trailing whitespace from user-provided registration data.
   private normalizeRegistrationData(
     userData: RegisterUserInput,

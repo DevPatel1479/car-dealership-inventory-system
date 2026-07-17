@@ -9,11 +9,11 @@ export class UserRepository implements IUserRepository {
     return {
       name: userData.name,
       email: userData.email,
+      role: 'USER',
     };
   }
 
   async findByEmail(email: string): Promise<UserResponse | null> {
-      return null;
+    return null;
   }
-
 }

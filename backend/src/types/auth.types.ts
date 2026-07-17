@@ -1,3 +1,5 @@
+export type UserRole = 'USER' | 'ADMIN';
+
 export interface RegisterUserInput {
   name: string;
   email: string;
@@ -7,13 +9,13 @@ export interface RegisterUserInput {
 export interface UserResponse {
   name: string;
   email: string;
+  role: UserRole;
 }
 
 export interface IUserRepository {
-  findByEmail(
-    email : string
-  ) : Promise<UserResponse | null>;
+  findByEmail(email: string): Promise<UserResponse | null>;
 
-  create(userData: RegisterUserInput): Promise<UserResponse>;
-  
+  create(
+    userData: RegisterUserInput & { role: UserRole },
+  ): Promise<UserResponse>;
 }
