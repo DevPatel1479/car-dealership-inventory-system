@@ -137,10 +137,7 @@ describe('AuthService - User Registration', () => {
     expect(userRepository.create).not.toHaveBeenCalled();
   });
 
-
-  it(
-  'should normalize the email address before checking for duplicate users',
-  async () => {
+  it('should normalize the email address before checking for duplicate users', async () => {
     const userRepository = createMockUserRepository();
 
     userRepository.findByEmail.mockResolvedValue(null);
@@ -159,9 +156,7 @@ describe('AuthService - User Registration', () => {
     });
 
     // Duplicate lookup should always use the normalized email.
-    expect(userRepository.findByEmail).toHaveBeenCalledWith(
-      'john@example.com',
-    );
+    expect(userRepository.findByEmail).toHaveBeenCalledWith('john@example.com');
 
     // The normalized value should also be stored.
     expect(userRepository.create).toHaveBeenCalledWith(
@@ -169,6 +164,33 @@ describe('AuthService - User Registration', () => {
         email: 'john@example.com',
       }),
     );
-  },
-);
+  });
+
+  it('should assign default user role during registration', async () => {
+    const userRepository = createMockUserRepository();
+
+    userRepository.findByEmail.mockResolvedValue(null);
+
+    userRepository.create.mockResolvedValue({
+      name: 'John Do',
+      email: 'john@example.com',
+      role: 'USER',
+    });
+
+    const authService = new AuthService(userRepository);
+
+    await authService.register({
+      name: 'John Do',
+      email: 'john@example.com',
+      password: 'password123',
+    });
+
+    // New registrations should always create normal users.
+    // Admin privileges must not be granted during public registration.
+    expect(userRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        role: 'USER',
+      }),
+    );
+  });
 });
