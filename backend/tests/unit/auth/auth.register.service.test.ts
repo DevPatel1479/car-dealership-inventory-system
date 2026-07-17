@@ -136,4 +136,39 @@ describe('AuthService - User Registration', () => {
 
     expect(userRepository.create).not.toHaveBeenCalled();
   });
+
+
+  it(
+  'should normalize the email address before checking for duplicate users',
+  async () => {
+    const userRepository = createMockUserRepository();
+
+    userRepository.findByEmail.mockResolvedValue(null);
+
+    userRepository.create.mockResolvedValue({
+      name: 'John Do',
+      email: 'john@example.com',
+    });
+
+    const authService = new AuthService(userRepository);
+
+    await authService.register({
+      name: 'John Do',
+      email: '  John@Example.COM  ',
+      password: 'password123',
+    });
+
+    // Duplicate lookup should always use the normalized email.
+    expect(userRepository.findByEmail).toHaveBeenCalledWith(
+      'john@example.com',
+    );
+
+    // The normalized value should also be stored.
+    expect(userRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email: 'john@example.com',
+      }),
+    );
+  },
+);
 });
