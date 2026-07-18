@@ -102,4 +102,52 @@ export class VehicleRepository {
       throw new Error('Vehicle not found');
     }
   }
+
+  async findById(id: string): Promise<VehicleResponse | null> {
+    const vehicle = await VehicleModel.findOne({
+      id,
+    }).lean();
+
+    if (!vehicle) {
+      return null;
+    }
+
+    return {
+      id: vehicle.id,
+      make: vehicle.make,
+      model: vehicle.model,
+      category: vehicle.category,
+      price: vehicle.price,
+      quantity: vehicle.quantity,
+    };
+  }
+
+  async purchase(id: string): Promise<VehicleResponse> {
+    const vehicle = await VehicleModel.findOneAndUpdate(
+      {
+        id,
+      },
+      {
+        $inc: {
+          quantity: -1,
+        },
+      },
+      {
+        new: true,
+      },
+    ).lean();
+
+    if (!vehicle) {
+      throw new Error('Vehicle not found');
+    }
+
+    return {
+      id: vehicle.id,
+      make: vehicle.make,
+      model: vehicle.model,
+      category: vehicle.category,
+      price: vehicle.price,
+      quantity: vehicle.quantity,
+    };
+  }
 }
