@@ -30,23 +30,24 @@ export class VehicleController {
     return res.status(201).json(vehicle);
   }
 
-
   async findAll(_req: Request, res: Response): Promise<Response> {
     return res.status(200).json(vehicles);
   }
 
-
   async search(req: Request, res: Response): Promise<Response> {
-    const { make } = req.query;
+    const { make, model } = req.query;
 
     const filteredVehicles = vehicles.filter((vehicle) => {
-      if (make) {
-        return vehicle.make === make;
+      if (make && vehicle.make !== make) {
+        return false;
+      }
+
+      if (model && vehicle.model !== model) {
+        return false;
       }
 
       return true;
     });
-
 
     return res.status(200).json(filteredVehicles);
   }
