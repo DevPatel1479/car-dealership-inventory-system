@@ -150,4 +150,33 @@ export class VehicleRepository {
       quantity: vehicle.quantity,
     };
   }
+
+  async restock(id: string, quantity: number): Promise<VehicleResponse> {
+    const vehicle = await VehicleModel.findOneAndUpdate(
+      {
+        id,
+      },
+      {
+        $inc: {
+          quantity,
+        },
+      },
+      {
+        new: true,
+      },
+    ).lean();
+
+    if (!vehicle) {
+      throw new Error('Vehicle not found');
+    }
+
+    return {
+      id: vehicle.id,
+      make: vehicle.make,
+      model: vehicle.model,
+      category: vehicle.category,
+      price: vehicle.price,
+      quantity: vehicle.quantity,
+    };
+  }
 }
