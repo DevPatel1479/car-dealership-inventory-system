@@ -8,4 +8,11 @@ export class JwtService {
       expiresIn: '1h',
     });
   }
+
+  verifyToken(token: string): AuthTokenPayload {
+    return jwt.verify(
+      token,
+      process.env.JWT_SECRET ?? 'development-secret',
+    ) as AuthTokenPayload;
+  }
 }
