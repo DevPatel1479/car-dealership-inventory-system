@@ -241,4 +241,50 @@ describe('Vehicle Routes - Create Vehicle', () => {
       },
     ]);
   });
+
+  it('should search vehicles by price range', async () => {
+    // Arrange
+    const token = await getAuthToken();
+
+    await request(app)
+      .post('/api/vehicles')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        make: 'Toyota',
+        model: 'Corolla',
+        category: 'Sedan',
+        price: 20000,
+        quantity: 5,
+      });
+
+    await request(app)
+      .post('/api/vehicles')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        make: 'BMW',
+        model: 'X5',
+        category: 'SUV',
+        price: 60000,
+        quantity: 2,
+      });
+
+    // Act
+    const response = await request(app)
+      .get('/api/vehicles/search?minPrice=15000&maxPrice=30000')
+      .set('Authorization', `Bearer ${token}`);
+
+    // Assert
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual([
+      {
+        id: expect.any(String),
+        make: 'Toyota',
+        model: 'Corolla',
+        category: 'Sedan',
+        price: 20000,
+        quantity: 5,
+      },
+    ]);
+  });
 });
