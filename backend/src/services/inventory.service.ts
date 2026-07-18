@@ -16,4 +16,11 @@ export class InventoryService {
 
     return this.vehicleRepository.purchase(vehicleId);
   }
+
+  async restock(
+    vehicleId: string,
+    quantity: number,
+  ): Promise<VehicleInventory> {
+    return this.vehicleRepository.restock(vehicleId, quantity);
+  }
 }
