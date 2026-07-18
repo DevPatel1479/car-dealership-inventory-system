@@ -14,8 +14,15 @@ export class VehicleController {
       });
     }
 
-    return res.status(201).json({
-      message: 'Vehicle created',
-    });
+    const vehicle = {
+      id: crypto.randomUUID(),
+      make: validationResult.data.make,
+      model: validationResult.data.model,
+      category: validationResult.data.category,
+      price: validationResult.data.price,
+      quantity: validationResult.data.quantity,
+    };
+
+    return res.status(201).json(vehicle);
   }
 }
