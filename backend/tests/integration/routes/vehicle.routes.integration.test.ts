@@ -215,16 +215,16 @@ describe('Vehicle Routes - Create Vehicle', () => {
       .post('/api/vehicles')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        make: 'Honda',
-        model: 'Civic',
-        category: 'Sedan',
-        price: 18000,
-        quantity: 3,
+        make: 'BMW',
+        model: 'X5',
+        category: 'SUV',
+        price: 60000,
+        quantity: 2,
       });
 
     // Act
     const response = await request(app)
-      .get('/api/vehicles/search?category=Sedan')
+      .get('/api/vehicles/search?category=SUV')
       .set('Authorization', `Bearer ${token}`);
 
     // Assert
@@ -233,11 +233,11 @@ describe('Vehicle Routes - Create Vehicle', () => {
     expect(response.body).toEqual([
       {
         id: expect.any(String),
-        make: 'Honda',
-        model: 'Civic',
-        category: 'Sedan',
-        price: 18000,
-        quantity: 3,
+        make: 'BMW',
+        model: 'X5',
+        category: 'SUV',
+        price: 60000,
+        quantity: 2,
       },
     ]);
   });

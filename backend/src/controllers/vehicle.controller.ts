@@ -35,7 +35,7 @@ export class VehicleController {
   }
 
   async search(req: Request, res: Response): Promise<Response> {
-    const { make, model } = req.query;
+    const { make, model, category } = req.query;
 
     const filteredVehicles = vehicles.filter((vehicle) => {
       if (make && vehicle.make !== make) {
@@ -43,6 +43,10 @@ export class VehicleController {
       }
 
       if (model && vehicle.model !== model) {
+        return false;
+      }
+
+      if (category && vehicle.category !== category) {
         return false;
       }
 
