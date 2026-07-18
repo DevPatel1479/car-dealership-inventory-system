@@ -5,6 +5,15 @@ import { InventoryService } from '../../../src/services/inventory.service.js';
 describe('InventoryService - Restock Vehicle', () => {
   it('should increase vehicle quantity when restock is successful', async () => {
     const vehicleRepository = {
+      findById: jest.fn().mockResolvedValue({
+        id: 'vehicle-1',
+        make: 'Toyota',
+        model: 'Camry',
+        category: 'Sedan',
+        price: 25000,
+        quantity: 5,
+      }),
+
       restock: jest.fn().mockResolvedValue({
         id: 'vehicle-1',
         make: 'Toyota',
@@ -18,6 +27,8 @@ describe('InventoryService - Restock Vehicle', () => {
     const inventoryService = new InventoryService(vehicleRepository as any);
 
     const result = await inventoryService.restock('vehicle-1', 5);
+
+    expect(vehicleRepository.findById).toHaveBeenCalledWith('vehicle-1');
 
     expect(vehicleRepository.restock).toHaveBeenCalledWith('vehicle-1', 5);
 

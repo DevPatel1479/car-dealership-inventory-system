@@ -21,6 +21,12 @@ export class InventoryService {
     vehicleId: string,
     quantity: number,
   ): Promise<VehicleInventory> {
+    const vehicle = await this.vehicleRepository.findById(vehicleId);
+
+    if (!vehicle) {
+      throw new Error('Vehicle not found');
+    }
+
     return this.vehicleRepository.restock(vehicleId, quantity);
   }
 }
