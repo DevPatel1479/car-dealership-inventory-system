@@ -5,6 +5,15 @@ import { InventoryService } from '../../../src/services/inventory.service.js';
 describe('InventoryService - Purchase Vehicle', () => {
   it('should decrease vehicle quantity when purchase is successful', async () => {
     const vehicleRepository = {
+      findById: jest.fn().mockResolvedValue({
+        id: 'vehicle-1',
+        make: 'Toyota',
+        model: 'Camry',
+        category: 'Sedan',
+        price: 25000,
+        quantity: 5,
+      }),
+
       purchase: jest.fn().mockResolvedValue({
         id: 'vehicle-1',
         make: 'Toyota',
