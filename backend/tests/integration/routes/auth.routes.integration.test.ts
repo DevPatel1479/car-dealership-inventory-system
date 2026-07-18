@@ -28,4 +28,17 @@ describe('Auth Routes - Register', () => {
 
   });
 
+  it('should reject registration when request body is empty', async () => {
+  const response = await request(app)
+    .post('/api/auth/register')
+    .send({});
+
+  expect(response.status).toBe(400);
+
+  expect(response.body).toEqual({
+    message: 'Name is required',
+  });
+});
+
+
 });
