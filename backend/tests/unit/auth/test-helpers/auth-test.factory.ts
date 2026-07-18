@@ -25,7 +25,6 @@ export const createMockUserResponse = (
   role: data?.role ?? 'USER',
 });
 
-
 export const createMockUserRecord = (
   data?: Partial<AuthUserRecord>,
 ): AuthUserRecord => ({

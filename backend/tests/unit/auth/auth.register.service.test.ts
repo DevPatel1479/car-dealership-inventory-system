@@ -21,7 +21,7 @@ describe('AuthService - User Registration', () => {
     );
 
     const authService = new AuthService(userRepository);
-    
+
     const user = await authService.register({
       name: 'John Do',
       email: 'john@example.com',
@@ -31,7 +31,7 @@ describe('AuthService - User Registration', () => {
     expect(user).toEqual({
       name: 'John Do',
       email: 'john@example.com',
-      role : "USER"
+      role: 'USER',
     });
 
     expect(userRepository.create).toHaveBeenCalledWith(
@@ -39,7 +39,6 @@ describe('AuthService - User Registration', () => {
         name: 'John Do',
         email: 'john@example.com',
         password: expect.any(String),
-        
       }),
     );
   });
