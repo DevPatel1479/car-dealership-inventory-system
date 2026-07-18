@@ -1,5 +1,7 @@
 import type {
   IUserRepository,
+  LoginInput,
+  LoginResponse,
   RegisterUserInput,
   UserResponse,
   UserRole,
@@ -8,10 +10,13 @@ import { PasswordService } from './password.service.js';
 
 import { registrationSchema } from '../validators/registration.validator.js';
 
+import { JwtService } from './jwt.service.js';
+
 export class AuthService {
   constructor(
     private readonly userRepository: IUserRepository,
     private readonly passwordService = new PasswordService(),
+    private readonly jwtService = new JwtService(),
   ) {}
 
   async register(userData: RegisterUserInput): Promise<UserResponse> {
@@ -49,6 +54,53 @@ export class AuthService {
     return this.toUserResponse(createdUser);
   }
 
+  async login(
+  loginData: LoginInput,
+): Promise<LoginResponse> {
+
+
+  const normalizedEmail =
+    loginData.email.trim().toLowerCase();
+
+
+  const user =
+    await this.userRepository.findByEmail(
+      normalizedEmail,
+    );
+
+
+  if (!user) {
+    throw new Error('Invalid credentials');
+  }
+
+
+  const isPasswordValid =
+    await this.passwordService.compare(
+      loginData.password,
+      user.password,
+    );
+
+
+  if (!isPasswordValid) {
+    throw new Error('Invalid credentials');
+  }
+
+
+  const token =
+    this.jwtService.generateToken({
+      sub: user.email,
+      role: user.role,
+    });
+
+
+  return {
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    token,
+  };
+
+}
   private getDefaultUserRole(): UserRole {
     return 'USER';
   }
@@ -72,4 +124,5 @@ export class AuthService {
       password: userData.password.trim(),
     };
   }
+  
 }
