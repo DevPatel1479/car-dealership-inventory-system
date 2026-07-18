@@ -19,6 +19,7 @@ describe('InventoryRepository - Purchase Vehicle', () => {
   let repository: VehicleRepository;
 
   beforeAll(async () => {
+    await mongoose.disconnect();
     mongoServer = await MongoMemoryServer.create();
 
     await mongoose.connect(mongoServer.getUri());
@@ -33,7 +34,7 @@ describe('InventoryRepository - Purchase Vehicle', () => {
   });
 
   beforeEach(async () => {
-    await mongoose.connection.db?.dropDatabase();
+    await mongoose.connection.dropDatabase();
   });
 
   it('should decrease vehicle quantity after purchase', async () => {

@@ -17,6 +17,8 @@ describe('UserRepository', () => {
   let userRepository: UserRepository;
 
   beforeAll(async () => {
+
+    await mongoose.disconnect();
     mongoServer = await MongoMemoryServer.create();
 
     await mongoose.connect(mongoServer.getUri());
@@ -33,7 +35,7 @@ describe('UserRepository', () => {
   });
 
   beforeEach(async () => {
-    await mongoose.connection.db?.dropDatabase();
+    await mongoose.connection.dropDatabase();
 
     await UserModel.syncIndexes();
   });

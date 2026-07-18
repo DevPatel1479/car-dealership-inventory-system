@@ -18,7 +18,10 @@ describe('VehicleRepository', () => {
   let mongoServer: MongoMemoryServer;
   let repository: VehicleRepository;
 
+
   beforeAll(async () => {
+    await mongoose.disconnect();
+
     mongoServer = await MongoMemoryServer.create();
 
     await mongoose.connect(mongoServer.getUri());
@@ -33,8 +36,8 @@ describe('VehicleRepository', () => {
   });
 
   beforeEach(async () => {
-    await mongoose.connection.db?.dropDatabase();
-  });
+  await mongoose.connection.dropDatabase();
+});
 
   it('should persist a vehicle', async () => {
     await repository.create({
