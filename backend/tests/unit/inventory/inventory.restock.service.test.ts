@@ -56,4 +56,26 @@ describe('InventoryService - Restock Vehicle', () => {
 
     expect(vehicleRepository.restock).not.toHaveBeenCalled();
   });
+
+  it('should reject restock when quantity is less than or equal to zero', async () => {
+    const vehicleRepository = {
+      findById: jest.fn().mockResolvedValue({
+        id: 'vehicle-1',
+        make: 'Toyota',
+        model: 'Camry',
+        category: 'Sedan',
+        price: 25000,
+        quantity: 5,
+      }),
+      restock: jest.fn(),
+    };
+
+    const inventoryService = new InventoryService(vehicleRepository as any);
+
+    await expect(inventoryService.restock('vehicle-1', 0)).rejects.toThrow(
+      'Invalid restock quantity',
+    );
+
+    expect(vehicleRepository.restock).not.toHaveBeenCalled();
+  });
 });
