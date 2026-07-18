@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
-import { adminMiddleware } from '../../../src/middleware/admin.middleware.js';
+import { adminMiddleware } from '../../../src/middlewares/admin.middleware.js';
 
 describe('Admin Middleware', () => {
   it('should allow request when user has admin role', () => {
