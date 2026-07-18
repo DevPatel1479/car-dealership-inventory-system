@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import type {
   CreateVehiclePayload,
   VehicleResponse,
@@ -14,7 +15,10 @@ export class VehicleService {
     if (vehicleData.price <= 0 || vehicleData.quantity <= 0) {
       throw new Error('Invalid vehicle price or quantity');
     }
-
-    return this.vehicleRepository.create(vehicleData);
+    const vehicleWithId: VehicleResponse = {
+      id: randomUUID(),
+      ...vehicleData,
+    };
+    return this.vehicleRepository.create(vehicleWithId);
   }
 }
