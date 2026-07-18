@@ -1,6 +1,7 @@
 import { VehicleModel } from '../models/vehicle.model.js';
 
 import type {
+  CreateVehiclePayload,
   VehicleResponse,
   VehicleSearchFilters,
 } from '../types/vehicle.types.js';
@@ -68,5 +69,27 @@ export class VehicleRepository {
       price: vehicle.price,
       quantity: vehicle.quantity,
     }));
+  }
+
+  async update(
+    id: string,
+    updateData: Partial<CreateVehiclePayload>,
+  ): Promise<VehicleResponse> {
+    const vehicle = await VehicleModel.findOneAndUpdate({ id }, updateData, {
+      new: true,
+    }).lean();
+
+    if (!vehicle) {
+      throw new Error('Vehicle not found');
+    }
+
+    return {
+      id: vehicle.id,
+      make: vehicle.make,
+      model: vehicle.model,
+      category: vehicle.category,
+      price: vehicle.price,
+      quantity: vehicle.quantity,
+    };
   }
 }
