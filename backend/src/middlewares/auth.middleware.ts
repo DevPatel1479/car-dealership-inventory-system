@@ -7,7 +7,9 @@ export class AuthMiddleware {
     const authorizationHeader = req.headers.authorization;
 
     if (!authorizationHeader) {
-      throw new Error('Authentication token required');
+       res.status(401).json({
+        message: 'Authentication required',
+      });
     }
 
     const [scheme, token] = authorizationHeader.split(' ');
