@@ -196,4 +196,49 @@ describe('Vehicle Routes - Create Vehicle', () => {
       },
     ]);
   });
+  it('should search vehicles by category', async () => {
+    // Arrange
+    const token = await getAuthToken();
+
+    await request(app)
+      .post('/api/vehicles')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        make: 'Toyota',
+        model: 'Corolla',
+        category: 'Sedan',
+        price: 20000,
+        quantity: 5,
+      });
+
+    await request(app)
+      .post('/api/vehicles')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        make: 'Honda',
+        model: 'Civic',
+        category: 'Sedan',
+        price: 18000,
+        quantity: 3,
+      });
+
+    // Act
+    const response = await request(app)
+      .get('/api/vehicles/search?category=Sedan')
+      .set('Authorization', `Bearer ${token}`);
+
+    // Assert
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual([
+      {
+        id: expect.any(String),
+        make: 'Honda',
+        model: 'Civic',
+        category: 'Sedan',
+        price: 18000,
+        quantity: 3,
+      },
+    ]);
+  });
 });
