@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 
 import type {
+  AuthUserRecord,
   IUserRepository,
   UserResponse,
 } from '../../../../src/types/auth.types.js';
@@ -21,5 +22,15 @@ export const createMockUserResponse = (
 ): UserResponse => ({
   name: data?.name ?? 'John Do',
   email: data?.email ?? 'john@example.com',
+  role: data?.role ?? 'USER',
+});
+
+
+export const createMockUserRecord = (
+  data?: Partial<AuthUserRecord>,
+): AuthUserRecord => ({
+  name: data?.name ?? 'John Do',
+  email: data?.email ?? 'john@example.com',
+  password: data?.password ?? 'hashed-password',
   role: data?.role ?? 'USER',
 });
