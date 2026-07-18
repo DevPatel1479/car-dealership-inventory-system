@@ -94,4 +94,20 @@ export class VehicleController {
 
     return res.status(200).json(vehicles[vehicleIndex]);
   }
+
+  async delete(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+
+    const vehicleIndex = vehicles.findIndex((vehicle) => vehicle.id === id);
+
+    if (vehicleIndex === -1) {
+      return res.status(404).json({
+        message: 'Vehicle not found',
+      });
+    }
+
+    vehicles.splice(vehicleIndex, 1);
+
+    return res.status(204).send();
+  }
 }

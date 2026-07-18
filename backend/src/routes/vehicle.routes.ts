@@ -32,4 +32,10 @@ router.put(
   vehicleController.update.bind(vehicleController),
 );
 
+router.delete(
+  '/:id',
+  authMiddleware.handle.bind(authMiddleware),
+  vehicleController.delete.bind(vehicleController),
+);
+
 export default router;
