@@ -6,18 +6,19 @@ import type {
   VehicleResponse,
   VehicleSearchFilters,
 } from '../types/vehicle.types.js';
+import { NotFoundError } from '../errors/not-found.error.js';
 
 export class VehicleService {
   constructor(private readonly vehicleRepository: any) {}
 
   async create(vehicleData: CreateVehiclePayload): Promise<VehicleResponse> {
     if (!vehicleData.make || !vehicleData.model || !vehicleData.category) {
-      throw new Error('Vehicle details are required');
-    }
+  throw new ValidationError('Vehicle details are required');
+}
 
-    if (vehicleData.price <= 0 || vehicleData.quantity <= 0) {
-      throw new Error('Invalid vehicle price or quantity');
-    }
+if (vehicleData.price <= 0 || vehicleData.quantity <= 0) {
+  throw new ValidationError('Invalid vehicle price or quantity');
+}
     const vehicleWithId: VehicleResponse = {
       id: randomUUID(),
       ...vehicleData,
@@ -57,18 +58,34 @@ export class VehicleService {
   }
 
   async purchase(id: string): Promise<VehicleResponse> {
+    if (!id) {
+      throw new ValidationError('Vehicle id is required');
+    }
+
+    const vehicle = await this.vehicleRepository.findById(id);
+
+
+
+    if (!vehicle) {
+      throw new NotFoundError('Vehicle not found');
+    }
+
+    if (vehicle.quantity <= 0) {
+      throw new ValidationError('Vehicle is out of stock');
+    }
+
     return this.vehicleRepository.purchase(id);
   }
 
   async restock(id: string, quantity: number): Promise<VehicleResponse> {
-    if (!id) {
-      throw new Error('Vehicle id is required');
-    }
-
-    if (quantity <= 0) {
-      throw new Error('Invalid restock quantity');
-    }
-
-    return this.vehicleRepository.restock(id, quantity);
+  if (!id) {
+    throw new ValidationError('Vehicle id is required');
   }
+
+  if (quantity <= 0) {
+    throw new ValidationError('Invalid restock quantity');
+  }
+
+  return this.vehicleRepository.restock(id, quantity);
+}
 }

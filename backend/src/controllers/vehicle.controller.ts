@@ -1,9 +1,12 @@
-import type { Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
+
+
 
 import { vehicleSchema } from '../validators/vehicle.validator.js';
 
 import { VehicleService } from '../services/vehicle.service.js';
 import { VehicleRepository } from '../repositories/vehicle.repository.js';
+import { ValidationError } from '../errors/validation.error.js';
 
 export class VehicleController {
   constructor(
@@ -85,71 +88,79 @@ export class VehicleController {
 
     return res.status(200).json(vehicle);
   }
-  async delete(req: Request, res: Response): Promise<Response> {
-    try {
-      const id = this.getVehicleId(req);
+  async delete(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const id = this.getVehicleId(req);
 
-      if (!id) {
-        return res.status(400).json({
-          message: 'Vehicle id is required',
-        });
-      }
-
-      await this.vehicleService.delete(id);
-
-      return res.status(204).send();
-    } catch (error: any) {
-      return res.status(404).json({
-        message: error.message,
-      });
+    if (!id) {
+      throw new ValidationError('Vehicle id is required');
     }
+
+    await this.vehicleService.delete(id);
+
+    res.sendStatus(204);
+  } catch (error) {
+    next(error);
   }
+}
 
-  async purchase(req: Request, res: Response): Promise<Response> {
-    try {
-      const id = this.getVehicleId(req);
+  
+  async purchase(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const id = this.getVehicleId(req);
 
-      if (!id) {
-        return res.status(400).json({
-          message: 'Vehicle id is required',
-        });
-      }
-
-      const vehicle = await this.vehicleService.purchase(id);
-
-      return res.status(200).json(vehicle);
-    } catch (error: any) {
-      return res.status(404).json({
-        message: error.message,
-      });
+    if (!id) {
+      throw new ValidationError('Vehicle id is required');
     }
+
+    const vehicle = await this.vehicleService.purchase(id);
+
+    res.status(200).json(vehicle);
+  } catch (error) {
+    next(error);
   }
+}
 
-  async restock(req: Request, res: Response): Promise<Response> {
-    try {
-      const id = this.getVehicleId(req);
+  async restock(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const id = this.getVehicleId(req);
 
-      if (!id) {
-        return res.status(400).json({
-          message: 'Vehicle id is required',
-        });
-      }
-
-      const quantity = Number(req.body.quantity);
-
-      if (!quantity) {
-        return res.status(400).json({
-          message: 'Quantity is required',
-        });
-      }
-
-      const vehicle = await this.vehicleService.restock(id, quantity);
-
-      return res.status(200).json(vehicle);
-    } catch (error: any) {
-      return res.status(404).json({
-        message: error.message,
-      });
+    if (!id) {
+      throw new ValidationError('Vehicle id is required');
     }
+
+    const { quantity } = req.body;
+
+    if (quantity === undefined || quantity === null) {
+      throw new ValidationError('Quantity is required');
+    }
+
+    const parsedQuantity = Number(quantity);
+
+    if (Number.isNaN(parsedQuantity)) {
+      throw new ValidationError('Quantity must be a number');
+    }
+
+    const vehicle = await this.vehicleService.restock(
+      id,
+      parsedQuantity,
+    );
+
+    res.status(200).json(vehicle);
+  } catch (error) {
+    next(error);
   }
+}
 }

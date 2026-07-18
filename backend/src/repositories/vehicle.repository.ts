@@ -7,7 +7,6 @@ import type {
   VehicleResponse,
   VehicleSearchFilters,
 } from '../types/vehicle.types.js';
-import { ValidationError } from '../errors/validation.error.js';
 
 export class VehicleRepository {
   async create(vehicleData: VehicleResponse): Promise<VehicleResponse> {
@@ -126,22 +125,22 @@ export class VehicleRepository {
   }
 
   async purchase(id: string): Promise<VehicleResponse> {
-  const vehicle = await VehicleModel.findOneAndUpdate(
-    {
-      id,
-      quantity: { $gt: 0 },
-    },
-    {
-      $inc: {
-        quantity: -1,
+    const vehicle = await VehicleModel.findOneAndUpdate(
+      { id },
+      {
+        $inc: {
+          quantity: -1,
+        },
       },
-    },
-    {
-      returnDocument: 'after',
-    },
-  ).lean();
+      {
+        returnDocument: 'after',
+      },
+    ).lean();
 
-  if (vehicle) {
+    if (!vehicle) {
+      throw new NotFoundError('Vehicle not found');
+    }
+
     return {
       id: vehicle.id,
       make: vehicle.make,
@@ -152,16 +151,6 @@ export class VehicleRepository {
     };
   }
 
-  const existingVehicle = await VehicleModel.findOne({ id }).lean();
-
-  if (!existingVehicle) {
-    throw new NotFoundError('Vehicle not found');
-  }
-
-  throw new ValidationError('Vehicle is out of stock');
-}
-
-  
   async restock(id: string, quantity: number): Promise<VehicleResponse> {
     const vehicle = await VehicleModel.findOneAndUpdate(
       {

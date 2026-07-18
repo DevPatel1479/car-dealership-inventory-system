@@ -49,7 +49,7 @@ router.post(
 router.post(
   '/:id/restock',
   authMiddleware.handle.bind(authMiddleware),
+  adminMiddleware,
   vehicleController.restock.bind(vehicleController),
 );
-
 export default router;
