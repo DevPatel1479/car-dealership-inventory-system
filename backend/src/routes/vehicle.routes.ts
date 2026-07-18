@@ -40,4 +40,10 @@ router.delete(
   vehicleController.delete.bind(vehicleController),
 );
 
+router.post(
+  '/:id/purchase',
+  authMiddleware.handle.bind(authMiddleware),
+  vehicleController.purchase.bind(vehicleController),
+);
+
 export default router;
