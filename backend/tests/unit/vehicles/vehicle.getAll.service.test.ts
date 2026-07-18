@@ -2,11 +2,8 @@ import { describe, expect, it, jest } from '@jest/globals';
 
 import { VehicleService } from '../../../src/services/vehicle.service.js';
 
-
 describe('VehicleService - Get All Vehicles', () => {
-
   it('should return all available vehicles', async () => {
-
     const vehicleRepository = {
       findAll: jest.fn().mockResolvedValue([
         {
@@ -28,20 +25,11 @@ describe('VehicleService - Get All Vehicles', () => {
       ]),
     };
 
+    const vehicleService = new VehicleService(vehicleRepository);
 
-    const vehicleService = new VehicleService(
-      vehicleRepository,
-    );
+    const result = await vehicleService.getAll();
 
-
-    const result =
-      await vehicleService.getAll();
-
-
-    expect(
-      vehicleRepository.findAll,
-    ).toHaveBeenCalled();
-
+    expect(vehicleRepository.findAll).toHaveBeenCalled();
 
     expect(result).toEqual([
       {
@@ -61,7 +49,5 @@ describe('VehicleService - Get All Vehicles', () => {
         quantity: 3,
       },
     ]);
-
   });
-
 });
