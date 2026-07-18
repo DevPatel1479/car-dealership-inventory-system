@@ -1,9 +1,7 @@
 import { JwtService } from '../services/jwt.service.js';
 
 export class AuthMiddleware {
-  constructor(
-    private readonly jwtService = new JwtService(),
-  ) {}
+  constructor(private readonly jwtService = new JwtService()) {}
 
   handle(req: any, res: any, next: () => void): void {
     const authorizationHeader = req.headers.authorization;
@@ -19,7 +17,9 @@ export class AuthMiddleware {
     }
 
     try {
-      this.jwtService.verifyToken(token);
+      const userPayload = this.jwtService.verifyToken(token);
+
+      req.user = userPayload;
 
       next();
     } catch {
