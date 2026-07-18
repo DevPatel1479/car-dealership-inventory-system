@@ -8,11 +8,25 @@ export const vehicleSchema = z.object({
     .trim()
     .min(1, 'Make is required'),
 
-  model: z.string(),
+  model: z
+    .string({
+      error: 'Model is required',
+    })
+    .trim()
+    .min(1, 'Model is required'),
 
-  category: z.string(),
+  category: z
+    .string({
+      error: 'Category is required',
+    })
+    .trim()
+    .min(1, 'Category is required'),
 
-  price: z.number(),
+  price: z.number({
+    error: 'Price is required',
+  }),
 
-  quantity: z.number(),
+  quantity: z.number({
+    error: 'Quantity is required',
+  }),
 });
