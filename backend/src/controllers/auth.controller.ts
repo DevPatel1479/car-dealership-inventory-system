@@ -16,26 +16,26 @@ export class AuthController {
     }
   }
   async login(req: Request, res: Response): Promise<void> {
-  const validationResult = loginSchema.safeParse(req.body);
+    const validationResult = loginSchema.safeParse(req.body);
 
-  if (!validationResult.success) {
-    const firstIssue = validationResult.error.issues.at(0);
+    if (!validationResult.success) {
+      const firstIssue = validationResult.error.issues.at(0);
 
-    res.status(400).json({
-      message: firstIssue?.message ?? 'Invalid login details',
-    });
+      res.status(400).json({
+        message: firstIssue?.message ?? 'Invalid login details',
+      });
 
-    return;
+      return;
+    }
+
+    try {
+      const response = await this.authService.login(validationResult.data);
+
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(401).json({
+        message: (error as Error).message,
+      });
+    }
   }
-
-  try {
-    const response = await this.authService.login(validationResult.data);
-
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(401).json({
-      message: (error as Error).message,
-    });
-  }
-}
 }

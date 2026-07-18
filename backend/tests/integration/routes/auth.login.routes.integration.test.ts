@@ -38,4 +38,25 @@ describe('Auth Routes - Login', () => {
       message: 'Email is required',
     });
   });
+
+
+  it('should reject access to a protected route without a JWT token', async () => {
+  const response = await request(app)
+    .post('/api/vehicles')
+    .send({
+      make: 'Toyota',
+      model: 'Corolla',
+      category: 'Sedan',
+      price: 20000,
+      quantity: 5,
+    });
+
+  expect(response.status).toBe(401);
+
+  expect(response.body).toEqual({
+    message: 'Authentication required',
+  });
+});
+  
+
 });
