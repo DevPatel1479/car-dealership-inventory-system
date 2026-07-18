@@ -46,4 +46,26 @@ describe('Admin Middleware', () => {
 
     expect(next).not.toHaveBeenCalled();
   });
+
+  it('should reject request when user is missing', () => {
+    const req: any = {};
+
+    const res: any = {
+      status: jest.fn().mockReturnThis(),
+
+      json: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    adminMiddleware(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(401);
+
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Authentication required',
+    });
+
+    expect(next).not.toHaveBeenCalled();
+  });
 });
