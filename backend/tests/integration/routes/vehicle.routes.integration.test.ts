@@ -1,9 +1,13 @@
 import { describe, expect, it } from '@jest/globals';
 import request from 'supertest';
-
+import { vehicles } from '../../../src/controllers/vehicle.controller.js';
 import app from '../../../src/app.js';
 
 describe('Vehicle Routes - Create Vehicle', () => {
+  beforeEach(() => {
+    vehicles.length = 0;
+  });
+
   it('should reject vehicle creation when request body is empty', async () => {
     // Arrange
     await request(app).post('/api/auth/register').send({

@@ -14,4 +14,9 @@ router.post(
   vehicleController.create.bind(vehicleController),
 );
 
+router.get(
+  '/',
+  authMiddleware.handle.bind(authMiddleware),
+  vehicleController.findAll.bind(vehicleController),
+);
 export default router;
