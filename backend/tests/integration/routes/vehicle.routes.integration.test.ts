@@ -12,12 +12,10 @@ describe('Vehicle Routes - Create Vehicle', () => {
       password: 'password123',
     });
 
-    const loginResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'john@example.com',
-        password: 'password123',
-      });
+    const loginResponse = await request(app).post('/api/auth/login').send({
+      email: 'john@example.com',
+      password: 'password123',
+    });
 
     const token = loginResponse.body.token;
 
@@ -32,6 +30,40 @@ describe('Vehicle Routes - Create Vehicle', () => {
 
     expect(response.body).toEqual({
       message: 'Make is required',
+    });
+  });
+
+  it('should reject vehicle creation when price is missing', async () => {
+    // Arrange
+    await request(app).post('/api/auth/register').send({
+      name: 'John Doe',
+      email: 'john@example.com',
+      password: 'password123',
+    });
+
+    const loginResponse = await request(app).post('/api/auth/login').send({
+      email: 'john@example.com',
+      password: 'password123',
+    });
+
+    const token = loginResponse.body.token;
+
+    // Act
+    const response = await request(app)
+      .post('/api/vehicles')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        make: 'Toyota',
+        model: 'Corolla',
+        category: 'Sedan',
+        quantity: 5,
+      });
+
+    // Assert
+    expect(response.status).toBe(400);
+
+    expect(response.body).toEqual({
+      message: 'Price is required',
     });
   });
 });
