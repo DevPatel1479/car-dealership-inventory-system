@@ -54,53 +54,36 @@ export class AuthService {
     return this.toUserResponse(createdUser);
   }
 
-  async login(
-  loginData: LoginInput,
-): Promise<LoginResponse> {
+  async login(loginData: LoginInput): Promise<LoginResponse> {
+    const normalizedEmail = loginData.email.trim().toLowerCase();
 
+    const user = await this.userRepository.findByEmail(normalizedEmail);
 
-  const normalizedEmail =
-    loginData.email.trim().toLowerCase();
+    if (!user) {
+      throw new Error('Invalid credentials');
+    }
 
-
-  const user =
-    await this.userRepository.findByEmail(
-      normalizedEmail,
-    );
-
-
-  if (!user) {
-    throw new Error('Invalid credentials');
-  }
-
-
-  const isPasswordValid =
-    await this.passwordService.compare(
+    const isPasswordValid = await this.passwordService.compare(
       loginData.password,
       user.password,
     );
 
+    if (!isPasswordValid) {
+      throw new Error('Invalid credentials');
+    }
 
-  if (!isPasswordValid) {
-    throw new Error('Invalid credentials');
-  }
-
-
-  const token =
-    this.jwtService.generateToken({
+    const token = this.jwtService.generateToken({
       sub: user.email,
       role: user.role,
     });
 
-
-  return {
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    token,
-  };
-
-}
+    return {
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token,
+    };
+  }
   private getDefaultUserRole(): UserRole {
     return 'USER';
   }
@@ -124,5 +107,4 @@ export class AuthService {
       password: userData.password.trim(),
     };
   }
-  
 }
