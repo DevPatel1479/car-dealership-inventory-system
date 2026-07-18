@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import { loginSchema } from '../validators/login.validator.js';
 
 export class AuthController {
   constructor(private readonly authService: any) {}
@@ -14,15 +15,27 @@ export class AuthController {
       });
     }
   }
-  async login(req: Request, res: Response): Promise<Response> {
-    try {
-      const result = await this.authService.login(req.body);
+  async login(req: Request, res: Response): Promise<void> {
+  const validationResult = loginSchema.safeParse(req.body);
 
-      return res.status(200).json(result);
-    } catch (error: any) {
-      return res.status(401).json({
-        message: error.message,
-      });
-    }
+  if (!validationResult.success) {
+    const firstIssue = validationResult.error.issues.at(0);
+
+    res.status(400).json({
+      message: firstIssue?.message ?? 'Invalid login details',
+    });
+
+    return;
   }
+
+  try {
+    const response = await this.authService.login(validationResult.data);
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(401).json({
+      message: (error as Error).message,
+    });
+  }
+}
 }
