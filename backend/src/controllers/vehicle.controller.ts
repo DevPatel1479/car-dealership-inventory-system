@@ -63,4 +63,23 @@ export class VehicleController {
 
     return res.status(200).json(filteredVehicles);
   }
+
+  async update(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+
+    const vehicleIndex = vehicles.findIndex((vehicle) => vehicle.id === id);
+
+    if (vehicleIndex === -1) {
+      return res.status(404).json({
+        message: 'Vehicle not found',
+      });
+    }
+
+    vehicles[vehicleIndex] = {
+      ...vehicles[vehicleIndex],
+      ...req.body,
+    };
+
+    return res.status(200).json(vehicles[vehicleIndex]);
+  }
 }

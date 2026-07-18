@@ -26,4 +26,10 @@ router.get(
   vehicleController.search.bind(vehicleController),
 );
 
+router.put(
+  '/:id',
+  authMiddleware.handle.bind(authMiddleware),
+  vehicleController.update.bind(vehicleController),
+);
+
 export default router;
