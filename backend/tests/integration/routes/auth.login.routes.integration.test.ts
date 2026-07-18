@@ -3,8 +3,6 @@ import request from 'supertest';
 
 import app from '../../../src/app.js';
 
-
-
 describe('Auth Routes - Login', () => {
   it('should authenticate user through POST /api/auth/login', async () => {
     // Arrange
@@ -28,6 +26,16 @@ describe('Auth Routes - Login', () => {
       email: 'john@example.com',
       role: 'USER',
       token: expect.any(String),
+    });
+  });
+
+  it('should reject login when request body is empty', async () => {
+    const response = await request(app).post('/api/auth/login').send({});
+
+    expect(response.status).toBe(400);
+
+    expect(response.body).toEqual({
+      message: 'Email is required',
     });
   });
 });
