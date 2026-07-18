@@ -38,4 +38,40 @@ describe('VehicleService - Search Vehicles', () => {
       },
     ]);
   });
+
+  it('should search vehicles by model', async () => {
+    const vehicleRepository = {
+      search: jest.fn().mockResolvedValue([
+        {
+          id: 'vehicle-2',
+          make: 'Toyota',
+          model: 'Corolla',
+          category: 'Sedan',
+          price: 22000,
+          quantity: 8,
+        },
+      ]),
+    };
+
+    const vehicleService = new VehicleService(vehicleRepository as any);
+
+    const result = await vehicleService.search({
+      model: 'Corolla',
+    });
+
+    expect(vehicleRepository.search).toHaveBeenCalledWith({
+      model: 'Corolla',
+    });
+
+    expect(result).toEqual([
+      {
+        id: 'vehicle-2',
+        make: 'Toyota',
+        model: 'Corolla',
+        category: 'Sedan',
+        price: 22000,
+        quantity: 8,
+      },
+    ]);
+  });
 });
