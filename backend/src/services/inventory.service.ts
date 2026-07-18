@@ -27,6 +27,10 @@ export class InventoryService {
       throw new Error('Vehicle not found');
     }
 
+    if (quantity <= 0) {
+      throw new Error('Invalid restock quantity');
+    }
+
     return this.vehicleRepository.restock(vehicleId, quantity);
   }
 }
