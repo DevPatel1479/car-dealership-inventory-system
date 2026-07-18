@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import { AuthMiddleware } from '../middlewares/auth.middleware.js';
 import { VehicleController } from '../controllers/vehicle.controller.js';
+import { adminMiddleware } from '../middlewares/admin.middleware.js';
 
 const router = Router();
 
@@ -35,6 +36,7 @@ router.put(
 router.delete(
   '/:id',
   authMiddleware.handle.bind(authMiddleware),
+  adminMiddleware,
   vehicleController.delete.bind(vehicleController),
 );
 

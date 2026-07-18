@@ -1,9 +1,11 @@
 import { JwtService } from '../services/jwt.service.js';
 
+import type { Request, Response, NextFunction } from 'express';
+
 export class AuthMiddleware {
   constructor(private readonly jwtService = new JwtService()) {}
 
-  handle(req: any, res: any, next: () => void): void {
+  handle(req: Request, res: Response, next: NextFunction): void {
     const authorizationHeader = req.headers.authorization;
 
     if (!authorizationHeader) {
@@ -34,8 +36,6 @@ export class AuthMiddleware {
       res.status(401).json({
         message: 'Invalid authentication token',
       });
-
-      return;
     }
   }
 }
