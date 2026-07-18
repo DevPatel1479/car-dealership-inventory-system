@@ -94,24 +94,23 @@ describe('AuthMiddleware', () => {
     expect(next).toHaveBeenCalled();
   });
 
-
   it('should reject request when authorization header format is invalid', async () => {
-  const req = {
-    headers: {
-      authorization: 'Basic invalid-token',
-    },
-  } as any;
+    const req = {
+      headers: {
+        authorization: 'Basic invalid-token',
+      },
+    } as any;
 
-  const res = {} as any;
+    const res = {} as any;
 
-  const next = jest.fn();
+    const next = jest.fn();
 
-  const authMiddleware = new AuthMiddleware();
+    const authMiddleware = new AuthMiddleware();
 
-  expect(() =>
-    authMiddleware.handle(req, res, next),
-  ).toThrow('Invalid authentication token');
+    expect(() => authMiddleware.handle(req, res, next)).toThrow(
+      'Invalid authentication token',
+    );
 
-  expect(next).not.toHaveBeenCalled();
-});
+    expect(next).not.toHaveBeenCalled();
+  });
 });

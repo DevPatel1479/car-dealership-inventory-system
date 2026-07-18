@@ -28,6 +28,7 @@ export const createMockUserResponse = (
 export const createMockUserRecord = (
   data?: Partial<AuthUserRecord>,
 ): AuthUserRecord => ({
+  id: data?.id ?? 'user-1',
   name: data?.name ?? 'John Do',
   email: data?.email ?? 'john@example.com',
   password: data?.password ?? 'hashed-password',

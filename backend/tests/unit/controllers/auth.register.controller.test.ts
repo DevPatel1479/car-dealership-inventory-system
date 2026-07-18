@@ -1,18 +1,21 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
 import { AuthController } from '../../../src/controllers/auth.controller.js';
+import type { AuthService } from '../../../src/services/auth.service.js';
 
 describe('AuthController - Register', () => {
   it('should register a user and return created user', async () => {
     const authService = {
-      register: jest.fn().mockResolvedValue({
-        name: 'John Doe',
-        email: 'john@example.com',
-        role: 'USER',
-      }),
+      register: jest.fn<AuthService['register']>(),
     };
 
-    const controller = new AuthController(authService as any);
+    authService.register.mockResolvedValue({
+      name: 'John Doe',
+      email: 'john@example.com',
+      role: 'USER',
+    });
+
+    const controller = new AuthController(authService);
 
     const req: any = {
       body: {
@@ -43,8 +46,10 @@ describe('AuthController - Register', () => {
   });
   it('should return error when registration fails', async () => {
     const authService = {
-      register: jest.fn().mockRejectedValue(new Error('User already exists')),
+      register: jest.fn<AuthService['register']>(),
     };
+
+    authService.register.mockRejectedValue(new Error('User already exists'));
 
     const controller = new AuthController(authService as any);
 

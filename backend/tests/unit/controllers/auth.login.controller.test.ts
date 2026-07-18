@@ -1,19 +1,20 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
 import { AuthController } from '../../../src/controllers/auth.controller.js';
+import type { AuthService } from '../../../src/services/auth.service.js';
 
 describe('AuthController - Login', () => {
   it('should login user and return authenticated user with token', async () => {
     const authService = {
-      login: jest.fn().mockResolvedValue({
-        user: {
-          name: 'John Doe',
-          email: 'john@example.com',
-          role: 'USER',
-        },
-        token: 'jwt-token',
-      }),
+      login: jest.fn<AuthService['login']>(),
     };
+
+    authService.login.mockResolvedValue({
+      name: 'John Doe',
+      email: 'john@example.com',
+      role: 'USER',
+      token: 'jwt-token',
+    });
 
     const controller = new AuthController(authService as any);
 
@@ -37,41 +38,40 @@ describe('AuthController - Login', () => {
     });
 
     expect(res.json).toHaveBeenCalledWith({
-      user: {
-        name: 'John Doe',
-        email: 'john@example.com',
-        role: 'USER',
-      },
+      name: 'John Doe',
+      email: 'john@example.com',
+      role: 'USER',
       token: 'jwt-token',
     });
   });
 
   it('should return error when login fails', async () => {
-  const authService = {
-    login: jest.fn().mockRejectedValue(new Error('Invalid credentials')),
-  };
+    const authService = {
+      login: jest.fn<AuthService['login']>(),
+    };
 
-  const controller = new AuthController(authService as any);
+    authService.login.mockRejectedValue(new Error('Invalid credentials'));
 
-  const req: any = {
-    body: {
-      email: 'john@example.com',
-      password: 'wrong-password',
-    },
-  };
+    const controller = new AuthController(authService as any);
 
-  const res: any = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn(),
-  };
+    const req: any = {
+      body: {
+        email: 'john@example.com',
+        password: 'wrong-password',
+      },
+    };
 
-  await controller.login(req, res);
+    const res: any = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
 
-  expect(res.status).toHaveBeenCalledWith(401);
+    await controller.login(req, res);
 
-  expect(res.json).toHaveBeenCalledWith({
-    message: 'Invalid credentials',
+    expect(res.status).toHaveBeenCalledWith(401);
+
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Invalid credentials',
+    });
   });
-});
-
 });

@@ -3,6 +3,7 @@ import { describe, expect, it, jest } from '@jest/globals';
 import { AuthService } from '../../../src/services/auth.service.js';
 
 import {
+  createMockUserRecord,
   createMockUserRepository,
   createMockUserResponse,
 } from './test-helpers/auth-test.factory.js';
@@ -46,8 +47,8 @@ describe('AuthService - User Registration', () => {
   it('should reject user registration when email address is already registered', async () => {
     const userRepository = createMockUserRepository();
 
-    userRepository.findByEmail.mockResolvedValue(
-      createMockUserResponse({
+    userRepository.create.mockResolvedValue(
+      createMockUserRecord({
         name: 'John Do',
         email: 'john@example.com',
       }),

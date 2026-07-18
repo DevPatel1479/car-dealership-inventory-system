@@ -6,6 +6,7 @@ import {
   createMockUserRepository,
   createMockUserRecord,
 } from './test-helpers/auth-test.factory.js';
+import type { PasswordService } from '../../../src/services/password.service.js';
 
 describe('AuthService - User Login', () => {
   it('should authenticate user with valid credentials', async () => {
@@ -20,8 +21,8 @@ describe('AuthService - User Login', () => {
       }),
     );
 
-    const passwordService = {
-      compare: jest.fn().mockResolvedValue(true),
+    const passwordService: Pick<PasswordService, 'compare'> = {
+      compare: jest.fn<PasswordService['compare']>(),
     };
 
     const authService = new AuthService(userRepository, passwordService as any);
@@ -64,43 +65,34 @@ describe('AuthService - User Login', () => {
     expect(passwordService.compare).not.toHaveBeenCalled();
   });
 
-
   it('should reject login when password is incorrect', async () => {
-  const userRepository = createMockUserRepository();
+    const userRepository = createMockUserRepository();
 
-  userRepository.findByEmail.mockResolvedValue(
-    createMockUserRecord({
-      name: 'John Doe',
-      email: 'john@example.com',
-      password: 'hashed-password',
-      role: 'USER',
-    }),
-  );
+    userRepository.findByEmail.mockResolvedValue(
+      createMockUserRecord({
+        name: 'John Doe',
+        email: 'john@example.com',
+        password: 'hashed-password',
+        role: 'USER',
+      }),
+    );
 
-  const passwordService = {
-    compare: jest.fn().mockResolvedValue(false),
-  };
+    const passwordService: Pick<PasswordService, 'compare'> = {
+      compare: jest.fn<PasswordService['compare']>(),
+    };
 
-  const authService = new AuthService(
-    userRepository,
-    passwordService as any,
-  );
+    const authService = new AuthService(userRepository, passwordService as any);
 
-  await expect(
-    authService.login({
-      email: 'john@example.com',
-      password: 'wrong-password',
-    }),
-  ).rejects.toThrow('Invalid credentials');
+    await expect(
+      authService.login({
+        email: 'john@example.com',
+        password: 'wrong-password',
+      }),
+    ).rejects.toThrow('Invalid credentials');
 
-
-  expect(passwordService.compare).toHaveBeenCalledWith(
-    'wrong-password',
-    'hashed-password',
-  );
+    expect(passwordService.compare).toHaveBeenCalledWith(
+      'wrong-password',
+      'hashed-password',
+    );
+  });
 });
-
-});
-
-
-

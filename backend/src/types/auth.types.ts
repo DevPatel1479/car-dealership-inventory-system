@@ -1,5 +1,12 @@
 export type UserRole = 'USER' | 'ADMIN';
 
+export interface CreateUserInput {
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+}
+
 export interface RegisterUserInput {
   name: string;
   email: string;
@@ -7,12 +14,12 @@ export interface RegisterUserInput {
 }
 
 export interface AuthUserRecord {
+  id: string;
   name: string;
   email: string;
   password: string;
   role: UserRole;
 }
-
 export interface UserResponse {
   name: string;
   email: string;
@@ -29,6 +36,7 @@ export interface LoginResponse extends UserResponse {
 }
 
 export interface AuthTokenPayload {
+  id: string;
   sub: string;
   role: UserRole;
 }
@@ -36,5 +44,5 @@ export interface AuthTokenPayload {
 export interface IUserRepository {
   findByEmail(email: string): Promise<AuthUserRecord | null>;
 
-  create(userData: AuthUserRecord): Promise<UserResponse>;
+  create(userData: CreateUserInput): Promise<UserResponse>;
 }

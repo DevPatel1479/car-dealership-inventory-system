@@ -1,28 +1,32 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
 import { InventoryService } from '../../../src/services/inventory.service.js';
+import type { VehicleRepository } from '../../../src/repositories/vehicle.repository.js';
 
 describe('InventoryService - Restock Vehicle', () => {
   it('should increase vehicle quantity when restock is successful', async () => {
     const vehicleRepository = {
-      findById: jest.fn().mockResolvedValue({
-        id: 'vehicle-1',
-        make: 'Toyota',
-        model: 'Camry',
-        category: 'Sedan',
-        price: 25000,
-        quantity: 5,
-      }),
-
-      restock: jest.fn().mockResolvedValue({
-        id: 'vehicle-1',
-        make: 'Toyota',
-        model: 'Camry',
-        category: 'Sedan',
-        price: 25000,
-        quantity: 10,
-      }),
+      findById: jest.fn<VehicleRepository['findById']>(),
+      restock: jest.fn<VehicleRepository['restock']>(),
     };
+
+    vehicleRepository.findById.mockResolvedValue({
+      id: 'vehicle-1',
+      make: 'Toyota',
+      model: 'Camry',
+      category: 'Sedan',
+      price: 25000,
+      quantity: 5,
+    });
+
+    vehicleRepository.restock.mockResolvedValue({
+      id: 'vehicle-1',
+      make: 'Toyota',
+      model: 'Camry',
+      category: 'Sedan',
+      price: 25000,
+      quantity: 10,
+    });
 
     const inventoryService = new InventoryService(vehicleRepository as any);
 
@@ -44,8 +48,8 @@ describe('InventoryService - Restock Vehicle', () => {
 
   it('should reject restock when vehicle does not exist', async () => {
     const vehicleRepository = {
-      findById: jest.fn().mockResolvedValue(null),
-      restock: jest.fn(),
+      findById: jest.fn<VehicleRepository['findById']>(),
+      restock: jest.fn<VehicleRepository['restock']>(),
     };
 
     const inventoryService = new InventoryService(vehicleRepository as any);
@@ -59,16 +63,18 @@ describe('InventoryService - Restock Vehicle', () => {
 
   it('should reject restock when quantity is less than or equal to zero', async () => {
     const vehicleRepository = {
-      findById: jest.fn().mockResolvedValue({
-        id: 'vehicle-1',
-        make: 'Toyota',
-        model: 'Camry',
-        category: 'Sedan',
-        price: 25000,
-        quantity: 5,
-      }),
-      restock: jest.fn(),
+      findById: jest.fn<VehicleRepository['findById']>(),
+      restock: jest.fn<VehicleRepository['restock']>(),
     };
+
+    vehicleRepository.findById.mockResolvedValue({
+      id: 'vehicle-1',
+      make: 'Toyota',
+      model: 'Camry',
+      category: 'Sedan',
+      price: 25000,
+      quantity: 5,
+    });
 
     const inventoryService = new InventoryService(vehicleRepository as any);
 

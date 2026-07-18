@@ -1,6 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
 import { VehicleService } from '../../../src/services/vehicle.service.js';
+import type { VehicleRepository } from '../../../src/repositories/vehicle.repository.js';
 
 describe('VehicleService - Create Vehicle', () => {
   it('should create a new vehicle with valid vehicle details', async () => {
@@ -87,15 +88,17 @@ describe('VehicleService - Create Vehicle', () => {
 
   it('should generate a unique id when creating a vehicle', async () => {
     const vehicleRepository = {
-      create: jest.fn().mockResolvedValue({
-        id: 'vehicle-123',
-        make: 'Toyota',
-        model: 'Camry',
-        category: 'Sedan',
-        price: 25000,
-        quantity: 5,
-      }),
+      create: jest.fn<VehicleRepository['create']>(),
     };
+
+    vehicleRepository.create.mockResolvedValue({
+      id: 'vehicle-123',
+      make: 'Toyota',
+      model: 'Camry',
+      category: 'Sedan',
+      price: 25000,
+      quantity: 5,
+    });
 
     const vehicleService = new VehicleService(vehicleRepository);
 

@@ -1,19 +1,22 @@
 import { describe, expect, it, jest } from '@jest/globals';
 
 import { VehicleService } from '../../../src/services/vehicle.service.js';
+import type { VehicleRepository } from '../../../src/repositories/vehicle.repository.js';
 
 describe('VehicleService - Update Vehicle', () => {
   it('should update vehicle details when vehicle exists', async () => {
     const vehicleRepository = {
-      update: jest.fn().mockResolvedValue({
-        id: 'vehicle-123',
-        make: 'Toyota',
-        model: 'Corolla',
-        category: 'Sedan',
-        price: 30000,
-        quantity: 10,
-      }),
+      update: jest.fn<VehicleRepository['update']>(),
     };
+
+    vehicleRepository.update.mockResolvedValue({
+      id: 'vehicle-123',
+      make: 'Toyota',
+      model: 'Corolla',
+      category: 'Sedan',
+      price: 30000,
+      quantity: 10,
+    });
 
     const vehicleService = new VehicleService(vehicleRepository);
 

@@ -75,6 +75,7 @@ export class AuthService {
     }
 
     const token = this.jwtService.generateToken({
+      id: user.id,
       sub: user.email,
       role: user.role,
     });
