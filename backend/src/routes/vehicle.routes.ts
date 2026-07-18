@@ -19,4 +19,11 @@ router.get(
   authMiddleware.handle.bind(authMiddleware),
   vehicleController.findAll.bind(vehicleController),
 );
+
+router.get(
+  '/search',
+  authMiddleware.handle.bind(authMiddleware),
+  vehicleController.search.bind(vehicleController),
+);
+
 export default router;
