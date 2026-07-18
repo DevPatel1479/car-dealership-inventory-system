@@ -20,17 +20,21 @@ export class AuthService {
   ) {}
 
   async register(userData: RegisterUserInput): Promise<UserResponse> {
-    // Normalize incoming values before validation and persistence.
-    const normalizedUserData = this.normalizeRegistrationData(userData);
-
-    const validationResult = registrationSchema.safeParse(normalizedUserData);
+    const validationResult = registrationSchema.safeParse(userData);
 
     if (!validationResult.success) {
-      throw new Error(
-        validationResult.error.issues.at(0)?.message ??
-          'Invalid registration details',
-      );
+      const firstIssue = validationResult.error.issues.at(0);
+
+      if (firstIssue?.path[0] === 'name') {
+        throw new Error('Name is required');
+      }
+
+      throw new Error(firstIssue?.message ?? 'Invalid registration details');
     }
+
+    const normalizedUserData = this.normalizeRegistrationData(
+      validationResult.data,
+    );
 
     const existingUser = await this.userRepository.findByEmail(
       normalizedUserData.email,
@@ -40,7 +44,6 @@ export class AuthService {
       throw new Error('User already exists');
     }
 
-    // Persist only the hashed password. Plain-text passwords must never be stored.
     const hashedPassword = await this.passwordService.hash(
       normalizedUserData.password,
     );
@@ -53,7 +56,6 @@ export class AuthService {
 
     return this.toUserResponse(createdUser);
   }
-
   async login(loginData: LoginInput): Promise<LoginResponse> {
     const normalizedEmail = loginData.email.trim().toLowerCase();
 
