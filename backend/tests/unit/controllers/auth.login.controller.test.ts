@@ -45,4 +45,33 @@ describe('AuthController - Login', () => {
       token: 'jwt-token',
     });
   });
+
+  it('should return error when login fails', async () => {
+  const authService = {
+    login: jest.fn().mockRejectedValue(new Error('Invalid credentials')),
+  };
+
+  const controller = new AuthController(authService as any);
+
+  const req: any = {
+    body: {
+      email: 'john@example.com',
+      password: 'wrong-password',
+    },
+  };
+
+  const res: any = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await controller.login(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(401);
+
+  expect(res.json).toHaveBeenCalledWith({
+    message: 'Invalid credentials',
+  });
+});
+
 });
