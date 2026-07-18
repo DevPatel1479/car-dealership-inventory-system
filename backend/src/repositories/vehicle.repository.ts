@@ -15,4 +15,16 @@ export class VehicleRepository {
       quantity: vehicle.quantity,
     };
   }
+  async findAll(): Promise<VehicleResponse[]> {
+    const vehicles = await VehicleModel.find().lean();
+
+    return vehicles.map((vehicle) => ({
+      id: vehicle.id,
+      make: vehicle.make,
+      model: vehicle.model,
+      category: vehicle.category,
+      price: vehicle.price,
+      quantity: vehicle.quantity,
+    }));
+  }
 }
