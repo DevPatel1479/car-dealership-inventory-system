@@ -110,4 +110,42 @@ describe('VehicleService - Search Vehicles', () => {
       },
     ]);
   });
+
+  it('should search vehicles within a price range', async () => {
+    const vehicleRepository = {
+      search: jest.fn().mockResolvedValue([
+        {
+          id: 'vehicle-4',
+          make: 'Hyundai',
+          model: 'Creta',
+          category: 'SUV',
+          price: 25000,
+          quantity: 6,
+        },
+      ]),
+    };
+
+    const vehicleService = new VehicleService(vehicleRepository as any);
+
+    const result = await vehicleService.search({
+      minPrice: 20000,
+      maxPrice: 30000,
+    });
+
+    expect(vehicleRepository.search).toHaveBeenCalledWith({
+      minPrice: 20000,
+      maxPrice: 30000,
+    });
+
+    expect(result).toEqual([
+      {
+        id: 'vehicle-4',
+        make: 'Hyundai',
+        model: 'Creta',
+        category: 'SUV',
+        price: 25000,
+        quantity: 6,
+      },
+    ]);
+  });
 });
