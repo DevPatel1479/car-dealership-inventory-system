@@ -63,4 +63,44 @@ describe('AuthService - User Login', () => {
 
     expect(passwordService.compare).not.toHaveBeenCalled();
   });
+
+
+  it('should reject login when password is incorrect', async () => {
+  const userRepository = createMockUserRepository();
+
+  userRepository.findByEmail.mockResolvedValue(
+    createMockUserRecord({
+      name: 'John Doe',
+      email: 'john@example.com',
+      password: 'hashed-password',
+      role: 'USER',
+    }),
+  );
+
+  const passwordService = {
+    compare: jest.fn().mockResolvedValue(false),
+  };
+
+  const authService = new AuthService(
+    userRepository,
+    passwordService as any,
+  );
+
+  await expect(
+    authService.login({
+      email: 'john@example.com',
+      password: 'wrong-password',
+    }),
+  ).rejects.toThrow('Invalid credentials');
+
+
+  expect(passwordService.compare).toHaveBeenCalledWith(
+    'wrong-password',
+    'hashed-password',
+  );
 });
+
+});
+
+
+
