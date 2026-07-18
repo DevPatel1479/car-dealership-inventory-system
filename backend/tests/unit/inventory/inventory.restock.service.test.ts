@@ -30,4 +30,19 @@ describe('InventoryService - Restock Vehicle', () => {
       quantity: 10,
     });
   });
+
+  it('should reject restock when vehicle does not exist', async () => {
+    const vehicleRepository = {
+      findById: jest.fn().mockResolvedValue(null),
+      restock: jest.fn(),
+    };
+
+    const inventoryService = new InventoryService(vehicleRepository as any);
+
+    await expect(inventoryService.restock('vehicle-999', 5)).rejects.toThrow(
+      'Vehicle not found',
+    );
+
+    expect(vehicleRepository.restock).not.toHaveBeenCalled();
+  });
 });
