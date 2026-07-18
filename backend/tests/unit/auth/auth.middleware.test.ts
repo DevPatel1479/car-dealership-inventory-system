@@ -59,9 +59,37 @@ describe('AuthMiddleware', () => {
 
     authMiddleware.handle(req, res, next);
 
-    expect(jwtService.verifyToken).toHaveBeenCalledWith(
-      'valid-token',
-    );
+    expect(jwtService.verifyToken).toHaveBeenCalledWith('valid-token');
+
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('should attach authenticated user payload to request', async () => {
+    const req = {
+      headers: {
+        authorization: 'Bearer valid-token',
+      },
+    } as any;
+
+    const res = {} as any;
+
+    const next = jest.fn();
+
+    const jwtService = {
+      verifyToken: jest.fn().mockReturnValue({
+        sub: 'john@example.com',
+        role: 'ADMIN',
+      }),
+    };
+
+    const authMiddleware = new AuthMiddleware(jwtService as any);
+
+    authMiddleware.handle(req, res, next);
+
+    expect(req.user).toEqual({
+      sub: 'john@example.com',
+      role: 'ADMIN',
+    });
 
     expect(next).toHaveBeenCalled();
   });
