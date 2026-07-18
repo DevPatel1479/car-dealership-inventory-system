@@ -92,4 +92,14 @@ export class VehicleRepository {
       quantity: vehicle.quantity,
     };
   }
+
+  async delete(id: string): Promise<void> {
+    const vehicle = await VehicleModel.findOneAndDelete({
+      id,
+    });
+
+    if (!vehicle) {
+      throw new Error('Vehicle not found');
+    }
+  }
 }
