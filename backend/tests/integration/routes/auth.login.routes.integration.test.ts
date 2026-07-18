@@ -73,4 +73,23 @@ describe('Auth Routes - Login', () => {
       message: 'Invalid authentication token',
     });
   });
+
+  it('should reject access when JWT token is invalid', async () => {
+    const response = await request(app)
+      .post('/api/vehicles')
+      .set('Authorization', 'Bearer invalid-jwt-token')
+      .send({
+        make: 'Toyota',
+        model: 'Corolla',
+        category: 'Sedan',
+        price: 20000,
+        quantity: 5,
+      });
+
+    expect(response.status).toBe(401);
+
+    expect(response.body).toEqual({
+      message: 'Invalid authentication token',
+    });
+  });
 });
