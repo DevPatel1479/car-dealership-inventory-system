@@ -75,6 +75,18 @@ export class VehicleController {
       });
     }
 
+    if (req.body.price !== undefined && req.body.price <= 0) {
+      return res.status(400).json({
+        message: 'Invalid vehicle price',
+      });
+    }
+
+    if (req.body.quantity !== undefined && req.body.quantity <= 0) {
+      return res.status(400).json({
+        message: 'Invalid vehicle quantity',
+      });
+    }
+
     vehicles[vehicleIndex] = {
       ...vehicles[vehicleIndex],
       ...req.body,
