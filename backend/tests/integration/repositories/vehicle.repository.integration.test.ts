@@ -100,42 +100,71 @@ describe('VehicleRepository', () => {
     );
   });
 
-
   it('should search vehicles by make', async () => {
-  await repository.create({
-    id: 'vehicle-1',
-    make: 'Toyota',
-    model: 'Camry',
-    category: 'Sedan',
-    price: 25000,
-    quantity: 5,
-  });
-
-  await repository.create({
-    id: 'vehicle-2',
-    make: 'BMW',
-    model: 'X5',
-    category: 'SUV',
-    price: 60000,
-    quantity: 3,
-  });
-
-
-  const vehicles = await repository.search({
-    make: 'Toyota',
-  });
-
-
-  expect(vehicles).toHaveLength(1);
-
-  expect(vehicles[0]).toEqual(
-    expect.objectContaining({
+    await repository.create({
       id: 'vehicle-1',
       make: 'Toyota',
       model: 'Camry',
-    }),
-  );
-});
+      category: 'Sedan',
+      price: 25000,
+      quantity: 5,
+    });
 
+    await repository.create({
+      id: 'vehicle-2',
+      make: 'BMW',
+      model: 'X5',
+      category: 'SUV',
+      price: 60000,
+      quantity: 3,
+    });
 
+    const vehicles = await repository.search({
+      make: 'Toyota',
+    });
+
+    expect(vehicles).toHaveLength(1);
+
+    expect(vehicles[0]).toEqual(
+      expect.objectContaining({
+        id: 'vehicle-1',
+        make: 'Toyota',
+        model: 'Camry',
+      }),
+    );
+  });
+
+  it('should update vehicle details', async () => {
+    await repository.create({
+      id: 'vehicle-1',
+      make: 'Toyota',
+      model: 'Camry',
+      category: 'Sedan',
+      price: 25000,
+      quantity: 5,
+    });
+
+    const updatedVehicle = await repository.update('vehicle-1', {
+      price: 30000,
+      quantity: 10,
+    });
+
+    expect(updatedVehicle).toEqual(
+      expect.objectContaining({
+        id: 'vehicle-1',
+        make: 'Toyota',
+        model: 'Camry',
+        price: 30000,
+        quantity: 10,
+      }),
+    );
+
+    const vehicleFromDatabase = await VehicleModel.findOne({
+      id: 'vehicle-1',
+    });
+
+    expect(vehicleFromDatabase?.price).toBe(30000);
+
+    expect(vehicleFromDatabase?.quantity).toBe(10);
+  });
 });
