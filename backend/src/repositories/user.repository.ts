@@ -9,8 +9,9 @@ import type {
 
 export class UserRepository implements IUserRepository {
   async create(
-    userData: RegisterUserInput & { role: 'USER' | 'ADMIN' },
-  ): Promise<UserResponse> {
+  userData: RegisterUserInput & { role: 'USER' | 'ADMIN' },
+): Promise<UserResponse> {
+  try {
     const user = await UserModel.create(userData);
 
     return {
@@ -18,7 +19,16 @@ export class UserRepository implements IUserRepository {
       email: user.email,
       role: user.role,
     };
+
+  } catch (error: any) {
+
+    if (error.code === 11000) {
+      throw new Error('User already exists');
+    }
+
+    throw error;
   }
+}
 
   async findByEmail(email: string): Promise<AuthUserRecord | null> {
     const user = await UserModel.findOne({

@@ -6,6 +6,13 @@ export interface RegisterUserInput {
   password: string;
 }
 
+export interface AuthUserRecord {
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+}
+
 export interface UserResponse {
   name: string;
   email: string;
@@ -13,9 +20,16 @@ export interface UserResponse {
 }
 
 export interface IUserRepository {
-  findByEmail(email: string): Promise<UserResponse | null>;
+  findByEmail(email: string): Promise<AuthUserRecord | null>;
 
-  create(
-    userData: RegisterUserInput & { role: UserRole },
-  ): Promise<UserResponse>;
+  create(userData: AuthUserRecord): Promise<UserResponse>;
+}
+
+export interface LoginResponse extends UserResponse {
+  token: string;
+}
+
+export interface AuthTokenPayload {
+  sub: string;
+  role: UserRole;
 }
