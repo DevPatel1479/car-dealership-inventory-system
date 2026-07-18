@@ -112,30 +112,54 @@ export class VehicleController {
   }
 
   async purchase(req: Request, res: Response): Promise<Response> {
-  const { id } = req.params;
+    const { id } = req.params;
 
+    const vehicleIndex = vehicles.findIndex((vehicle) => vehicle.id === id);
 
-  const vehicleIndex = vehicles.findIndex(
-    (vehicle) => vehicle.id === id,
-  );
+    if (vehicleIndex === -1) {
+      return res.status(404).json({
+        message: 'Vehicle not found',
+      });
+    }
 
+    vehicles[vehicleIndex] = {
+      ...vehicles[vehicleIndex],
+      quantity: vehicles[vehicleIndex].quantity - 1,
+    };
 
-  if (vehicleIndex === -1) {
-    return res.status(404).json({
-      message: 'Vehicle not found',
-    });
+    return res.status(200).json(vehicles[vehicleIndex]);
   }
 
+  async restock(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
 
-  vehicles[vehicleIndex] = {
-    ...vehicles[vehicleIndex],
-    quantity: vehicles[vehicleIndex].quantity - 1,
-  };
+    const quantity = Number(req.body.quantity);
 
+    if (!quantity) {
+      return res.status(400).json({
+        message: 'Quantity is required',
+      });
+    }
 
-  return res.status(200).json(
-    vehicles[vehicleIndex],
-  );
-}
+    if (quantity <= 0) {
+      return res.status(400).json({
+        message: 'Invalid restock quantity',
+      });
+    }
 
+    const vehicleIndex = vehicles.findIndex((vehicle) => vehicle.id === id);
+
+    if (vehicleIndex === -1) {
+      return res.status(404).json({
+        message: 'Vehicle not found',
+      });
+    }
+
+    vehicles[vehicleIndex] = {
+      ...vehicles[vehicleIndex],
+      quantity: vehicles[vehicleIndex].quantity + quantity,
+    };
+
+    return res.status(200).json(vehicles[vehicleIndex]);
+  }
 }
