@@ -35,7 +35,7 @@ export class VehicleController {
   }
 
   async search(req: Request, res: Response): Promise<Response> {
-    const { make, model, category } = req.query;
+    const { make, model, category, minPrice, maxPrice } = req.query;
 
     const filteredVehicles = vehicles.filter((vehicle) => {
       if (make && vehicle.make !== make) {
@@ -47,6 +47,14 @@ export class VehicleController {
       }
 
       if (category && vehicle.category !== category) {
+        return false;
+      }
+
+      if (minPrice && vehicle.price < Number(minPrice)) {
+        return false;
+      }
+
+      if (maxPrice && vehicle.price > Number(maxPrice)) {
         return false;
       }
 
