@@ -39,11 +39,8 @@ describe('Auth Routes - Login', () => {
     });
   });
 
-
   it('should reject access to a protected route without a JWT token', async () => {
-  const response = await request(app)
-    .post('/api/vehicles')
-    .send({
+    const response = await request(app).post('/api/vehicles').send({
       make: 'Toyota',
       model: 'Corolla',
       category: 'Sedan',
@@ -51,12 +48,29 @@ describe('Auth Routes - Login', () => {
       quantity: 5,
     });
 
-  expect(response.status).toBe(401);
+    expect(response.status).toBe(401);
 
-  expect(response.body).toEqual({
-    message: 'Authentication required',
+    expect(response.body).toEqual({
+      message: 'Authentication required',
+    });
   });
-});
-  
 
+  it('should reject access when authorization header is malformed', async () => {
+    const response = await request(app)
+      .post('/api/vehicles')
+      .set('Authorization', 'InvalidToken')
+      .send({
+        make: 'Toyota',
+        model: 'Corolla',
+        category: 'Sedan',
+        price: 20000,
+        quantity: 5,
+      });
+
+    expect(response.status).toBe(401);
+
+    expect(response.body).toEqual({
+      message: 'Invalid authentication token',
+    });
+  });
 });
