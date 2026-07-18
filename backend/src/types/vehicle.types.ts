@@ -14,3 +14,8 @@ export interface VehicleResponse {
   price: number;
   quantity: number;
 }
+
+export interface VehicleSearchFilters {
+  make?: string;
+  model?: string;
+}

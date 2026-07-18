@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type {
   CreateVehiclePayload,
   VehicleResponse,
+  VehicleSearchFilters,
 } from '../types/vehicle.types.js';
 
 export class VehicleService {
@@ -45,7 +46,7 @@ export class VehicleService {
     return this.vehicleRepository.findAll();
   }
 
-  async search(filters: { make?: string }): Promise<VehicleResponse[]> {
+  async search(filters: VehicleSearchFilters): Promise<VehicleResponse[]> {
     return this.vehicleRepository.search(filters);
   }
 }
