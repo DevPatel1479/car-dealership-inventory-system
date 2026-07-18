@@ -19,4 +19,6 @@ export interface VehicleSearchFilters {
   make?: string;
   model?: string;
   category?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
