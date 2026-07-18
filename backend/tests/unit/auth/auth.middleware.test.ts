@@ -36,4 +36,31 @@ describe('AuthMiddleware', () => {
       'Invalid authentication token',
     );
   });
+
+  it('should allow request when JWT token is valid', async () => {
+    const req = {
+      headers: {
+        authorization: 'Bearer valid-token',
+      },
+    } as any;
+
+    const res = {} as any;
+
+    const next = jest.fn();
+
+    const jwtService = {
+      verifyToken: jest.fn().mockReturnValue({
+        sub: 'john@example.com',
+        role: 'USER',
+      }),
+    };
+
+    const authMiddleware = new AuthMiddleware(jwtService as any);
+
+    authMiddleware.handle(req, res, next);
+
+    expect(jwtService.verifyToken).toHaveBeenCalledWith('valid-token');
+
+    expect(next).toHaveBeenCalled();
+  });
 });
