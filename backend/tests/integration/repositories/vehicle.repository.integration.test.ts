@@ -167,4 +167,27 @@ describe('VehicleRepository', () => {
 
     expect(vehicleFromDatabase?.quantity).toBe(10);
   });
+
+  it('should delete a vehicle', async () => {
+  await repository.create({
+    id: 'vehicle-1',
+    make: 'Toyota',
+    model: 'Camry',
+    category: 'Sedan',
+    price: 25000,
+    quantity: 5,
+  });
+
+
+  await repository.delete('vehicle-1');
+
+
+  const vehicle = await VehicleModel.findOne({
+    id: 'vehicle-1',
+  });
+
+
+  expect(vehicle).toBeNull();
+});
+
 });
