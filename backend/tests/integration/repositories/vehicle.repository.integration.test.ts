@@ -99,4 +99,43 @@ describe('VehicleRepository', () => {
       ]),
     );
   });
+
+
+  it('should search vehicles by make', async () => {
+  await repository.create({
+    id: 'vehicle-1',
+    make: 'Toyota',
+    model: 'Camry',
+    category: 'Sedan',
+    price: 25000,
+    quantity: 5,
+  });
+
+  await repository.create({
+    id: 'vehicle-2',
+    make: 'BMW',
+    model: 'X5',
+    category: 'SUV',
+    price: 60000,
+    quantity: 3,
+  });
+
+
+  const vehicles = await repository.search({
+    make: 'Toyota',
+  });
+
+
+  expect(vehicles).toHaveLength(1);
+
+  expect(vehicles[0]).toEqual(
+    expect.objectContaining({
+      id: 'vehicle-1',
+      make: 'Toyota',
+      model: 'Camry',
+    }),
+  );
+});
+
+
 });
