@@ -59,4 +59,44 @@ describe('VehicleRepository', () => {
 
     expect(vehicle?.make).toBe('Toyota');
   });
+
+  it('should return all vehicles', async () => {
+    await repository.create({
+      id: 'vehicle-1',
+      make: 'Toyota',
+      model: 'Camry',
+      category: 'Sedan',
+      price: 25000,
+      quantity: 5,
+    });
+
+    await repository.create({
+      id: 'vehicle-2',
+      make: 'BMW',
+      model: 'X5',
+      category: 'SUV',
+      price: 60000,
+      quantity: 3,
+    });
+
+    const vehicles = await repository.findAll();
+
+    expect(vehicles).toHaveLength(2);
+
+    expect(vehicles).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: 'vehicle-1',
+          make: 'Toyota',
+          model: 'Camry',
+        }),
+
+        expect.objectContaining({
+          id: 'vehicle-2',
+          make: 'BMW',
+          model: 'X5',
+        }),
+      ]),
+    );
+  });
 });
