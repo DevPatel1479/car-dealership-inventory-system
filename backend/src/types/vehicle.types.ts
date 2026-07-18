@@ -18,4 +18,5 @@ export interface VehicleResponse {
 export interface VehicleSearchFilters {
   make?: string;
   model?: string;
+  category?: string;
 }
