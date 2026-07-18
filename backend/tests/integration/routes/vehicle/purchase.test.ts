@@ -2,13 +2,13 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import request from 'supertest';
 
 import app from '../../../../src/app.js';
-import { vehicles } from '../../../../src/controllers/vehicle.controller.js';
 
 import { getAuthToken } from './helpers/auth.helper.js';
+import { VehicleModel } from '../../../../src/models/vehicle.model.js';
 
 describe('Vehicle Routes - Purchase Vehicle', () => {
-  beforeEach(() => {
-    vehicles.length = 0;
+  beforeEach(async () => {
+    await VehicleModel.deleteMany({});
   });
 
   it('should decrease vehicle quantity after successful purchase', async () => {

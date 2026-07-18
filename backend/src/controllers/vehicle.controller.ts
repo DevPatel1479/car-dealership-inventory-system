@@ -2,9 +2,26 @@ import type { Request, Response } from 'express';
 
 import { vehicleSchema } from '../validators/vehicle.validator.js';
 
-export const vehicles: any[] = [];
+import { VehicleService } from '../services/vehicle.service.js';
+import { VehicleRepository } from '../repositories/vehicle.repository.js';
 
 export class VehicleController {
+  constructor(
+    private readonly vehicleService = new VehicleService(
+      new VehicleRepository(),
+    ),
+  ) {}
+
+  private getVehicleId(req: Request): string | null {
+    const { id } = req.params;
+
+    if (typeof id !== 'string' || id.length === 0) {
+      return null;
+    }
+
+    return id;
+  }
+
   async create(req: Request, res: Response): Promise<Response> {
     const validationResult = vehicleSchema.safeParse(req.body);
 
@@ -16,150 +33,123 @@ export class VehicleController {
       });
     }
 
-    const vehicle = {
-      id: crypto.randomUUID(),
-      make: validationResult.data.make,
-      model: validationResult.data.model,
-      category: validationResult.data.category,
-      price: validationResult.data.price,
-      quantity: validationResult.data.quantity,
-    };
-
-    vehicles.push(vehicle);
+    const vehicle = await this.vehicleService.create(validationResult.data);
 
     return res.status(201).json(vehicle);
   }
 
   async findAll(_req: Request, res: Response): Promise<Response> {
+    const vehicles = await this.vehicleService.getAll();
+
     return res.status(200).json(vehicles);
   }
 
   async search(req: Request, res: Response): Promise<Response> {
-    const { make, model, category, minPrice, maxPrice } = req.query;
+    const filters = {
+      ...(typeof req.query.make === 'string' && {
+        make: req.query.make,
+      }),
 
-    const filteredVehicles = vehicles.filter((vehicle) => {
-      if (make && vehicle.make !== make) {
-        return false;
-      }
+      ...(typeof req.query.model === 'string' && {
+        model: req.query.model,
+      }),
 
-      if (model && vehicle.model !== model) {
-        return false;
-      }
+      ...(typeof req.query.category === 'string' && {
+        category: req.query.category,
+      }),
 
-      if (category && vehicle.category !== category) {
-        return false;
-      }
+      ...(typeof req.query.minPrice === 'string' && {
+        minPrice: Number(req.query.minPrice),
+      }),
 
-      if (minPrice && vehicle.price < Number(minPrice)) {
-        return false;
-      }
+      ...(typeof req.query.maxPrice === 'string' && {
+        maxPrice: Number(req.query.maxPrice),
+      }),
+    };
 
-      if (maxPrice && vehicle.price > Number(maxPrice)) {
-        return false;
-      }
+    const vehicles = await this.vehicleService.search(filters);
 
-      return true;
-    });
-
-    return res.status(200).json(filteredVehicles);
+    return res.status(200).json(vehicles);
   }
 
   async update(req: Request, res: Response): Promise<Response> {
-    const { id } = req.params;
+    const id = this.getVehicleId(req);
 
-    const vehicleIndex = vehicles.findIndex((vehicle) => vehicle.id === id);
-
-    if (vehicleIndex === -1) {
-      return res.status(404).json({
-        message: 'Vehicle not found',
-      });
-    }
-
-    if (req.body.price !== undefined && req.body.price <= 0) {
+    if (!id) {
       return res.status(400).json({
-        message: 'Invalid vehicle price',
+        message: 'Vehicle id is required',
       });
     }
 
-    if (req.body.quantity !== undefined && req.body.quantity <= 0) {
-      return res.status(400).json({
-        message: 'Invalid vehicle quantity',
-      });
-    }
+    const vehicle = await this.vehicleService.update(id, req.body);
 
-    vehicles[vehicleIndex] = {
-      ...vehicles[vehicleIndex],
-      ...req.body,
-    };
-
-    return res.status(200).json(vehicles[vehicleIndex]);
+    return res.status(200).json(vehicle);
   }
-
   async delete(req: Request, res: Response): Promise<Response> {
-    const { id } = req.params;
+    try {
+      const id = this.getVehicleId(req);
 
-    const vehicleIndex = vehicles.findIndex((vehicle) => vehicle.id === id);
+      if (!id) {
+        return res.status(400).json({
+          message: 'Vehicle id is required',
+        });
+      }
 
-    if (vehicleIndex === -1) {
+      await this.vehicleService.delete(id);
+
+      return res.status(204).send();
+    } catch (error: any) {
       return res.status(404).json({
-        message: 'Vehicle not found',
+        message: error.message,
       });
     }
-
-    vehicles.splice(vehicleIndex, 1);
-
-    return res.status(204).send();
   }
 
   async purchase(req: Request, res: Response): Promise<Response> {
-    const { id } = req.params;
+    try {
+      const id = this.getVehicleId(req);
 
-    const vehicleIndex = vehicles.findIndex((vehicle) => vehicle.id === id);
+      if (!id) {
+        return res.status(400).json({
+          message: 'Vehicle id is required',
+        });
+      }
 
-    if (vehicleIndex === -1) {
+      const vehicle = await this.vehicleService.purchase(id);
+
+      return res.status(200).json(vehicle);
+    } catch (error: any) {
       return res.status(404).json({
-        message: 'Vehicle not found',
+        message: error.message,
       });
     }
-
-    vehicles[vehicleIndex] = {
-      ...vehicles[vehicleIndex],
-      quantity: vehicles[vehicleIndex].quantity - 1,
-    };
-
-    return res.status(200).json(vehicles[vehicleIndex]);
   }
 
   async restock(req: Request, res: Response): Promise<Response> {
-    const { id } = req.params;
+    try {
+      const id = this.getVehicleId(req);
 
-    const quantity = Number(req.body.quantity);
+      if (!id) {
+        return res.status(400).json({
+          message: 'Vehicle id is required',
+        });
+      }
 
-    if (!quantity) {
-      return res.status(400).json({
-        message: 'Quantity is required',
-      });
-    }
+      const quantity = Number(req.body.quantity);
 
-    if (quantity <= 0) {
-      return res.status(400).json({
-        message: 'Invalid restock quantity',
-      });
-    }
+      if (!quantity) {
+        return res.status(400).json({
+          message: 'Quantity is required',
+        });
+      }
 
-    const vehicleIndex = vehicles.findIndex((vehicle) => vehicle.id === id);
+      const vehicle = await this.vehicleService.restock(id, quantity);
 
-    if (vehicleIndex === -1) {
+      return res.status(200).json(vehicle);
+    } catch (error: any) {
       return res.status(404).json({
-        message: 'Vehicle not found',
+        message: error.message,
       });
     }
-
-    vehicles[vehicleIndex] = {
-      ...vehicles[vehicleIndex],
-      quantity: vehicles[vehicleIndex].quantity + quantity,
-    };
-
-    return res.status(200).json(vehicles[vehicleIndex]);
   }
 }

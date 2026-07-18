@@ -1,5 +1,7 @@
 import { VehicleModel } from '../models/vehicle.model.js';
 
+import { NotFoundError } from '../errors/not-found.error.js';
+
 import type {
   CreateVehiclePayload,
   VehicleResponse,
@@ -80,7 +82,7 @@ export class VehicleRepository {
     }).lean();
 
     if (!vehicle) {
-      throw new Error('Vehicle not found');
+      throw new NotFoundError('Vehicle not found');
     }
 
     return {
@@ -99,7 +101,7 @@ export class VehicleRepository {
     });
 
     if (!vehicle) {
-      throw new Error('Vehicle not found');
+      throw new NotFoundError('Vehicle not found');
     }
   }
 
@@ -138,7 +140,7 @@ export class VehicleRepository {
     ).lean();
 
     if (!vehicle) {
-      throw new Error('Vehicle not found');
+      throw new NotFoundError('Vehicle not found');
     }
 
     return {
@@ -167,7 +169,7 @@ export class VehicleRepository {
     ).lean();
 
     if (!vehicle) {
-      throw new Error('Vehicle not found');
+      throw new NotFoundError('Vehicle not found');
     }
 
     return {

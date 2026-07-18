@@ -2,21 +2,17 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import request from 'supertest';
 
 import app from '../../../../src/app.js';
-import { vehicles } from '../../../../src/controllers/vehicle.controller.js';
 
 import { getAuthToken } from './helpers/auth.helper.js';
-
+import { VehicleModel } from '../../../../src/models/vehicle.model.js';
 
 describe('Vehicle Routes - Search Vehicles', () => {
-
-  beforeEach(() => {
-    vehicles.length = 0;
+  beforeEach(async () => {
+    await VehicleModel.deleteMany({});
   });
-
 
   it('should search vehicles by make', async () => {
     const token = await getAuthToken();
-
 
     await request(app)
       .post('/api/vehicles')
@@ -29,7 +25,6 @@ describe('Vehicle Routes - Search Vehicles', () => {
         quantity: 5,
       });
 
-
     await request(app)
       .post('/api/vehicles')
       .set('Authorization', `Bearer ${token}`)
@@ -40,15 +35,12 @@ describe('Vehicle Routes - Search Vehicles', () => {
         price: 18000,
         quantity: 3,
       });
-
 
     const response = await request(app)
       .get('/api/vehicles/search?make=Toyota')
       .set('Authorization', `Bearer ${token}`);
 
-
     expect(response.status).toBe(200);
-
 
     expect(response.body).toEqual([
       {
@@ -62,11 +54,8 @@ describe('Vehicle Routes - Search Vehicles', () => {
     ]);
   });
 
-
-
   it('should search vehicles by model', async () => {
     const token = await getAuthToken();
-
 
     await request(app)
       .post('/api/vehicles')
@@ -78,15 +67,12 @@ describe('Vehicle Routes - Search Vehicles', () => {
         price: 18000,
         quantity: 3,
       });
-
 
     const response = await request(app)
       .get('/api/vehicles/search?model=Civic')
       .set('Authorization', `Bearer ${token}`);
 
-
     expect(response.status).toBe(200);
-
 
     expect(response.body).toEqual([
       {
@@ -100,11 +86,8 @@ describe('Vehicle Routes - Search Vehicles', () => {
     ]);
   });
 
-
-
   it('should search vehicles by category', async () => {
     const token = await getAuthToken();
-
 
     await request(app)
       .post('/api/vehicles')
@@ -116,15 +99,12 @@ describe('Vehicle Routes - Search Vehicles', () => {
         price: 60000,
         quantity: 2,
       });
-
 
     const response = await request(app)
       .get('/api/vehicles/search?category=SUV')
       .set('Authorization', `Bearer ${token}`);
 
-
     expect(response.status).toBe(200);
-
 
     expect(response.body).toEqual([
       {
@@ -138,11 +118,8 @@ describe('Vehicle Routes - Search Vehicles', () => {
     ]);
   });
 
-
-
   it('should search vehicles by price range', async () => {
     const token = await getAuthToken();
-
 
     await request(app)
       .post('/api/vehicles')
@@ -155,7 +132,6 @@ describe('Vehicle Routes - Search Vehicles', () => {
         quantity: 5,
       });
 
-
     await request(app)
       .post('/api/vehicles')
       .set('Authorization', `Bearer ${token}`)
@@ -166,15 +142,12 @@ describe('Vehicle Routes - Search Vehicles', () => {
         price: 60000,
         quantity: 2,
       });
-
 
     const response = await request(app)
       .get('/api/vehicles/search?minPrice=15000&maxPrice=30000')
       .set('Authorization', `Bearer ${token}`);
 
-
     expect(response.status).toBe(200);
-
 
     expect(response.body).toEqual([
       {
@@ -187,5 +160,4 @@ describe('Vehicle Routes - Search Vehicles', () => {
       },
     ]);
   });
-
 });

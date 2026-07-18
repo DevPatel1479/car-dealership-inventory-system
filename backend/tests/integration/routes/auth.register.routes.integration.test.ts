@@ -30,6 +30,3 @@ describe('Auth Routes - Register', () => {
     });
   });
 });
-
-
-
