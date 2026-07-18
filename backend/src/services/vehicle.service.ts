@@ -44,4 +44,8 @@ export class VehicleService {
   async getAll(): Promise<VehicleResponse[]> {
     return this.vehicleRepository.findAll();
   }
+
+  async search(filters: { make?: string }): Promise<VehicleResponse[]> {
+    return this.vehicleRepository.search(filters);
+  }
 }
