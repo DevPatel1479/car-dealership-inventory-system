@@ -40,4 +40,8 @@ export class VehicleService {
 
     return this.vehicleRepository.update(id, updateData);
   }
+
+  async getAll(): Promise<VehicleResponse[]> {
+    return this.vehicleRepository.findAll();
+  }
 }
