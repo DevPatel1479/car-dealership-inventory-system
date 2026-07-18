@@ -46,4 +46,34 @@ describe('Vehicle Routes - Update Vehicle', () => {
       quantity: 10,
     });
   });
+
+  it('should reject vehicle update when price is invalid', async () => {
+    const token = await getAuthToken();
+
+    const createResponse = await request(app)
+      .post('/api/vehicles')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        make: 'Toyota',
+        model: 'Corolla',
+        category: 'Sedan',
+        price: 20000,
+        quantity: 5,
+      });
+
+    const vehicleId = createResponse.body.id;
+
+    const response = await request(app)
+      .put(`/api/vehicles/${vehicleId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        price: -500,
+      });
+
+    expect(response.status).toBe(400);
+
+    expect(response.body).toEqual({
+      message: 'Invalid vehicle price',
+    });
+  });
 });
