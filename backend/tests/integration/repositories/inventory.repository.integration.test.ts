@@ -56,4 +56,25 @@ describe('InventoryRepository - Purchase Vehicle', () => {
 
     expect(storedVehicle?.quantity).toBe(4);
   });
+
+  it('should increase vehicle quantity after restock', async () => {
+    await VehicleModel.create({
+      id: 'vehicle-1',
+      make: 'Toyota',
+      model: 'Camry',
+      category: 'Sedan',
+      price: 25000,
+      quantity: 5,
+    });
+
+    const vehicle = await repository.restock('vehicle-1', 5);
+
+    expect(vehicle.quantity).toBe(10);
+
+    const storedVehicle = await VehicleModel.findOne({
+      id: 'vehicle-1',
+    });
+
+    expect(storedVehicle?.quantity).toBe(10);
+  });
 });
