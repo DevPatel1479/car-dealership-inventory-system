@@ -84,4 +84,38 @@ describe('VehicleService - Create Vehicle', () => {
       }),
     ).rejects.toThrow('Invalid vehicle price or quantity');
   });
+
+  it('should generate a unique id when creating a vehicle', async () => {
+    const vehicleRepository = {
+      create: jest.fn().mockResolvedValue({
+        id: 'vehicle-123',
+        make: 'Toyota',
+        model: 'Camry',
+        category: 'Sedan',
+        price: 25000,
+        quantity: 5,
+      }),
+    };
+
+    const vehicleService = new VehicleService(vehicleRepository);
+
+    await vehicleService.create({
+      make: 'Toyota',
+      model: 'Camry',
+      category: 'Sedan',
+      price: 25000,
+      quantity: 5,
+    });
+
+    expect(vehicleRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        make: 'Toyota',
+        model: 'Camry',
+        category: 'Sedan',
+        price: 25000,
+        quantity: 5,
+      }),
+    );
+  });
 });
