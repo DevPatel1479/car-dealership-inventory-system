@@ -53,4 +53,23 @@ describe('UserRepository', () => {
     expect(storedUser?.password).toBe('hashed-password');
     expect(storedUser?.role).toBe('USER');
   });
+
+    it('should reject creating a user with an email address that already exists', async () => {
+  await userRepository.create({
+    name: 'John Doe',
+    email: 'john@example.com',
+    password: 'hashed-password',
+    role: 'USER',
+  });
+
+  await expect(
+    userRepository.create({
+      name: 'Another User',
+      email: 'john@example.com',
+      password: 'another-password',
+      role: 'USER',
+    }),
+  ).rejects.toThrow();
+});
+
 });
