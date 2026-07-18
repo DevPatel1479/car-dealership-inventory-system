@@ -1,7 +1,9 @@
 import { JwtService } from '../services/jwt.service.js';
 
 export class AuthMiddleware {
-  constructor(private readonly jwtService = new JwtService()) {}
+  constructor(
+    private readonly jwtService = new JwtService(),
+  ) {}
 
   handle(req: any, res: any, next: () => void): void {
     const authorizationHeader = req.headers.authorization;
@@ -10,7 +12,11 @@ export class AuthMiddleware {
       throw new Error('Authentication token required');
     }
 
-    const token = authorizationHeader.replace('Bearer ', '');
+    const [scheme, token] = authorizationHeader.split(' ');
+
+    if (scheme !== 'Bearer' || !token) {
+      throw new Error('Invalid authentication token');
+    }
 
     try {
       this.jwtService.verifyToken(token);

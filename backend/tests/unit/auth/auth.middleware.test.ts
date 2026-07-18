@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals';
 
 import { AuthMiddleware } from '../../../src/middlewares/auth.middleware.js';
 
@@ -59,7 +59,9 @@ describe('AuthMiddleware', () => {
 
     authMiddleware.handle(req, res, next);
 
-    expect(jwtService.verifyToken).toHaveBeenCalledWith('valid-token');
+    expect(jwtService.verifyToken).toHaveBeenCalledWith(
+      'valid-token',
+    );
 
     expect(next).toHaveBeenCalled();
   });
