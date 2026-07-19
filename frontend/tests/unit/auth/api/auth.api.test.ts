@@ -13,7 +13,9 @@ describe('Auth API', () => {
         const response = await registerUser(user);
 
         expect(response).toEqual({
-            success: true,
+            name: 'John Doe',
+            email: 'john@example.com',
+            role: 'USER',
         });
     });
 });

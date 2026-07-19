@@ -1,3 +1,5 @@
+import { authClient } from './http';
+
 interface RegisterPayload {
     name: string;
     email: string;
@@ -12,13 +14,10 @@ export async function registerUser(
     payload: RegisterPayload,
 ): Promise<RegisterResponse> {
 
-    // Temporary implementation to satisfy
-    // the first TDD contract.
-    //
-    // Real API integration will be added
-    // after introducing the HTTP client layer.
+    const response = await authClient.post(
+        '/api/auth/register',
+        payload,
+    );
 
-    return {
-        success: true,
-    };
+    return response.data;
 }
