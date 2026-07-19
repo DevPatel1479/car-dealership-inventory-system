@@ -26,12 +26,16 @@ export default function LandingPage() {
                     Login
                 </button>
 
+
                 <button
                     type="button"
+                    onClick={() => navigate('/register')}
                     className="rounded bg-green-600 px-6 py-2 text-white"
                 >
                     Register
                 </button>
+
+
 
             </div>
 

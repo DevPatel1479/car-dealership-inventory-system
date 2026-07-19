@@ -1,6 +1,6 @@
 // Application router configuration will be defined here.
 
- 
+
 import {
     Route,
     Routes,
@@ -9,6 +9,7 @@ import {
 import LandingPage from './LandingPage';
 
 import LoginPage from '../features/auth/pages/LoginPage';
+import RegisterPage from '../features/auth/pages/RegisterPage';
 
 
 export default function AppRouter() {
@@ -25,6 +26,11 @@ export default function AppRouter() {
             <Route
                 path="/login"
                 element={<LoginPage />}
+            />
+
+            <Route
+                path="/register"
+                element={<RegisterPage />}
             />
 
         </Routes>
