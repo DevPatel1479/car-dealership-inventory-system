@@ -13,12 +13,12 @@ export class VehicleService {
 
   async create(vehicleData: CreateVehiclePayload): Promise<VehicleResponse> {
     if (!vehicleData.make || !vehicleData.model || !vehicleData.category) {
-  throw new ValidationError('Vehicle details are required');
-}
+      throw new ValidationError('Vehicle details are required');
+    }
 
-if (vehicleData.price <= 0 || vehicleData.quantity <= 0) {
-  throw new ValidationError('Invalid vehicle price or quantity');
-}
+    if (vehicleData.price <= 0 || vehicleData.quantity <= 0) {
+      throw new ValidationError('Invalid vehicle price or quantity');
+    }
     const vehicleWithId: VehicleResponse = {
       id: randomUUID(),
       ...vehicleData,
@@ -64,8 +64,6 @@ if (vehicleData.price <= 0 || vehicleData.quantity <= 0) {
 
     const vehicle = await this.vehicleRepository.findById(id);
 
-
-
     if (!vehicle) {
       throw new NotFoundError('Vehicle not found');
     }
@@ -78,14 +76,14 @@ if (vehicleData.price <= 0 || vehicleData.quantity <= 0) {
   }
 
   async restock(id: string, quantity: number): Promise<VehicleResponse> {
-  if (!id) {
-    throw new ValidationError('Vehicle id is required');
-  }
+    if (!id) {
+      throw new ValidationError('Vehicle id is required');
+    }
 
-  if (quantity <= 0) {
-    throw new ValidationError('Invalid restock quantity');
-  }
+    if (quantity <= 0) {
+      throw new ValidationError('Invalid restock quantity');
+    }
 
-  return this.vehicleRepository.restock(id, quantity);
-}
+    return this.vehicleRepository.restock(id, quantity);
+  }
 }
