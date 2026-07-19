@@ -3,6 +3,9 @@ import VehicleList from "../components/VehicleList";
 import VehicleSearch from "../components/VehicleSearch";
 
 import Navbar from "../../../../src/components/layout/Navbar";
+import PageContainer from "../../../components/layout/PageContainer";
+import DashboardHeader from "../../../components/layout/DashboardHeader";
+import Sidebar from "../../../components/layout/Sidebar";
 
 export default function VehiclesPage() {
     return (
@@ -10,21 +13,24 @@ export default function VehiclesPage() {
         <>
             <Navbar />
 
+            <div className="flex min-h-screen">
+                <Sidebar />
 
-            <main className="mx-auto max-w-7xl space-y-8 p-8">
-                <header>
-                    <h1 className="text-3xl font-bold">
-                        Vehicle Inventory
-                    </h1>
-                </header>
+                <PageContainer>
+                    <DashboardHeader
+                        title="Vehicle Inventory"
+                        subtitle="Manage your dealership inventory."
+                    />
 
-                <VehicleSearch />
+                    <div className="mt-8 space-y-8">
+                        <VehicleSearch />
 
-                <VehicleForm />
+                        <VehicleForm />
 
-                <VehicleList />
-            </main>
-
+                        <VehicleList />
+                    </div>
+                </PageContainer>
+            </div>
 
         </>
     );

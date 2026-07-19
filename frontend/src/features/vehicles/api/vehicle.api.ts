@@ -27,6 +27,16 @@ export interface UpdateVehiclePayload {
     quantity: number;
 }
 
+export interface VehicleSearchFilters {
+    make?: string;
+    model?: string;
+    category?: string;
+    minPrice?: number;
+    maxPrice?: number;
+}
+
+
+
 
 export interface DeleteVehicleResponse {
     success: boolean;
@@ -80,4 +90,23 @@ export async function deleteVehicle(
     );
 
     return response.data;
+}
+
+
+export async function searchVehicles(
+    filters: VehicleSearchFilters,
+): Promise<Vehicle[]> {
+
+
+    const response =
+        await authClient.get<Vehicle[]>(
+            '/api/vehicles/search',
+            {
+                params: filters,
+            },
+        );
+
+
+    return response.data;
+
 }
