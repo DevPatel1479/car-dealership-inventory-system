@@ -5,6 +5,7 @@ import { authClient } from '../../../../src/features/auth/api/http';
 import {
     createVehicle,
     getVehicles,
+    updateVehicle,
 } from '../../../../src/features/vehicles/api/vehicle.api';
 
 
@@ -93,6 +94,55 @@ describe('Vehicle API', () => {
             quantity: 5,
         });
 
+
+    });
+
+
+    it('should update an existing vehicle', async () => {
+
+        const vehicleId = '1';
+
+        const payload = {
+            make: 'Toyota',
+            model: 'Camry',
+            category: 'Sedan',
+            price: 27000,
+            quantity: 8,
+        };
+
+
+        const updatedVehicle = {
+            id: vehicleId,
+            ...payload,
+        };
+
+
+        vi.spyOn(
+            authClient,
+            'put',
+        )
+            .mockResolvedValue({
+                data: updatedVehicle,
+            });
+
+
+        const response = await updateVehicle(
+            vehicleId,
+            payload,
+        );
+
+
+        expect(response)
+            .toEqual(updatedVehicle);
+
+
+        expect(
+            authClient.put,
+        )
+            .toHaveBeenCalledWith(
+                `/api/vehicles/${vehicleId}`,
+                payload,
+            );
 
     });
 
