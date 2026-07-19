@@ -4,61 +4,132 @@ import type { ReactNode } from 'react';
 
 import { loginUser, registerUser } from '../api/auth.api';
 
-import { saveToken, removeToken, getToken } from '../services/auth.storage';
+import {
+    saveAuth,
+    removeAuth,
+    getToken,
+    getUser,
+} from "../services/auth.storage";
 
 type AuthContextType = {
-  token: string | null;
 
-  login: (data: any) => Promise<void>;
+    token: string | null;
 
-  register: (data: any) => Promise<void>;
+    user: {
+        email: string;
+        role: string;
+    } | null;
 
-  logout: () => void;
+    login: (data: any) => Promise<void>;
+
+    register: (data: any) => Promise<void>;
+
+    logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(getToken());
+export function AuthProvider({
+    children,
+}: {
+    children: ReactNode;
+}) {
 
-  const login = async (data: any) => {
-    const response = await loginUser(data);
 
-    const token = response.token;
+    const [token, setToken] =
+        useState<string | null>(
+            getToken()
+        );
 
-    saveToken(token);
 
-    setToken(token);
-  };
+    const [user, setUser] =
+        useState(
+            getUser()
+        );
 
-  const register = async (data: any) => {
-    await registerUser(data);
-  };
 
-  const logout = () => {
-    removeToken();
 
-    setToken(null);
-  };
+    const login = async (
+        data: any,
+    ) => {
 
-  return (
-    <AuthContext.Provider
-      value={{
-        token,
-        login,
-        register,
-        logout,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+
+        const response =
+            await loginUser(data);
+
+
+
+        saveAuth(
+            response.token,
+            response.user,
+        );
+
+
+        setToken(
+            response.token,
+        );
+
+
+        setUser(
+            response.user,
+        );
+
+    };
+
+
+
+    const register = async (
+        data: any,
+    ) => {
+
+        await registerUser(data);
+
+    };
+
+
+
+    const logout = () => {
+
+
+        removeAuth();
+
+
+        setToken(null);
+
+
+        setUser(null);
+
+    };
+
+
+
+    return (
+
+        <AuthContext.Provider
+
+            value={{
+                token,
+                user,
+                login,
+                register,
+                logout,
+            }}
+
+        >
+
+            {children}
+
+        </AuthContext.Provider>
+
+    );
+
 }
 
+
 export function useAuth() {
-  const context = useContext(AuthContext);
+    const context = useContext(AuthContext);
 
-  if (!context) throw new Error('useAuth must be inside AuthProvider');
+    if (!context) throw new Error('useAuth must be inside AuthProvider');
 
-  return context;
+    return context;
 }

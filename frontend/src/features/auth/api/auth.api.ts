@@ -38,6 +38,10 @@ export async function registerUser(payload: RegisterPayload): Promise<RegisterRe
 export async function loginUser(payload: LoginPayload): Promise<LoginResponse> {
   const response = await authClient.post('/api/auth/login', payload);
 
+  console.log(
+    "LOGIN API RESPONSE:",
+    response.data
+  );
   return {
     user: {
       email: response.data.email,
