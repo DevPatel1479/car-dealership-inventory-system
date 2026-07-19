@@ -8,16 +8,38 @@ import LoginPage from '../features/auth/pages/LoginPage';
 import RegisterPage from '../features/auth/pages/RegisterPage';
 import VehiclesPage from '../features/vehicles/pages/VehiclesPage';
 
+import NotFoundPage from './NotFoundPage';
+
 export default function AppRouter() {
-  return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
+    return (
+        <Routes>
 
-      <Route path="/login" element={<LoginPage />} />
+            <Route
+                path="/"
+                element={<LandingPage />}
+            />
 
-      <Route path="/register" element={<RegisterPage />} />
+            <Route
+                path="/login"
+                element={<LoginPage />}
+            />
 
-      <Route path="/vehicles" element={<VehiclesPage />} />
-    </Routes>
-  );
+            <Route
+                path="/register"
+                element={<RegisterPage />}
+            />
+
+            <Route
+                path="/vehicles"
+                element={<VehiclesPage />}
+            />
+
+            {/* Invalid route handler */}
+            <Route
+                path="*"
+                element={<NotFoundPage />}
+            />
+
+        </Routes>
+    );
 }
