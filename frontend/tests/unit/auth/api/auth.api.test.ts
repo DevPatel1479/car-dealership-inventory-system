@@ -18,4 +18,23 @@ describe('Auth API', () => {
             role: 'USER',
         });
     });
+
+
+    it('should login an existing user and return jwt token', async () => {
+        const credentials = {
+            email: 'john@example.com',
+            password: 'password123',
+        };
+
+        const response = await loginUser(credentials);
+
+        expect(response).toEqual({
+            user: {
+                email: 'john@example.com',
+                role: 'USER',
+            },
+            token: 'jwt-token',
+        });
+    });
+
 });
