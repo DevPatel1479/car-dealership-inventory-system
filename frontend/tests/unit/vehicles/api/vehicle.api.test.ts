@@ -6,7 +6,10 @@ import {
     createVehicle,
     getVehicles,
     updateVehicle,
+    deleteVehicle,
 } from '../../../../src/features/vehicles/api/vehicle.api';
+
+import * as authStorage from '../../../../src/features/auth/services/auth.storage';
 
 
 describe('Vehicle API', () => {
@@ -142,6 +145,50 @@ describe('Vehicle API', () => {
             .toHaveBeenCalledWith(
                 `/api/vehicles/${vehicleId}`,
                 payload,
+            );
+
+    });
+    it('should delete a vehicle when admin user is authenticated', async () => {
+
+        const vehicleId = '1';
+
+
+        vi.spyOn(
+            authStorage,
+            'getToken',
+        )
+            .mockReturnValue(
+                'admin-jwt-token',
+            );
+
+
+        vi.spyOn(
+            authClient,
+            'delete',
+        )
+            .mockResolvedValue({
+                data: {
+                    success: true,
+                },
+            });
+
+
+        const response = await deleteVehicle(
+            vehicleId,
+        );
+
+
+        expect(response)
+            .toEqual({
+                success: true,
+            });
+
+
+        expect(
+            authClient.delete,
+        )
+            .toHaveBeenCalledWith(
+                `/api/vehicles/${vehicleId}`,
             );
 
     });
