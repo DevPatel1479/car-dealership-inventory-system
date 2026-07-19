@@ -1,6 +1,34 @@
-export function RegisterForm() {
+import { useState } from 'react';
+
+interface RegisterFormProps {
+    onSubmit?: (credentials: {
+        name: string;
+        email: string;
+        password: string;
+    }) => void;
+}
+
+export function RegisterForm({
+    onSubmit,
+}: RegisterFormProps) {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    function handleSubmit(
+        event: React.FormEvent<HTMLFormElement>,
+    ) {
+        event.preventDefault();
+
+        onSubmit?.({
+            name,
+            email,
+            password,
+        });
+    }
+
     return (
-        <form>
+        <form onSubmit={handleSubmit}>
             <label htmlFor="name">
                 Name
             </label>
@@ -9,6 +37,10 @@ export function RegisterForm() {
                 id="name"
                 name="name"
                 type="text"
+                value={name}
+                onChange={(event) => {
+                    setName(event.target.value);
+                }}
             />
 
             <label htmlFor="email">
@@ -19,6 +51,10 @@ export function RegisterForm() {
                 id="email"
                 name="email"
                 type="email"
+                value={email}
+                onChange={(event) => {
+                    setEmail(event.target.value);
+                }}
             />
 
             <label htmlFor="password">
@@ -29,6 +65,10 @@ export function RegisterForm() {
                 id="password"
                 name="password"
                 type="password"
+                value={password}
+                onChange={(event) => {
+                    setPassword(event.target.value);
+                }}
             />
 
             <button type="submit">
