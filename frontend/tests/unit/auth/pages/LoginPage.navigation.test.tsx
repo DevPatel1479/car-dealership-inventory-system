@@ -6,7 +6,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "../../../../src/features/auth/pages/LoginPage";
 
 vi.mock("../../../../src/features/auth/api/auth.api", () => ({
-    login: vi.fn().mockResolvedValue({
+    loginUser: vi.fn().mockResolvedValue({
         token: "jwt-token",
     }),
 }));
