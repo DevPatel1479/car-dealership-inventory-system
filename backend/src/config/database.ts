@@ -19,7 +19,7 @@ export async function connectDatabase(): Promise<void> {
     return;
   }
 
-  await mongoose.connect(process.env.MONGO_URI!);
+  await mongoose.connect(process.env.MONGODB_URI!);
 
   isConnected = true;
 
