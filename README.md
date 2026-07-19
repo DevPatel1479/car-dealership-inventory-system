@@ -58,6 +58,29 @@ Start the backend development server:
 npm run dev
 ```
 
+## Default Admin Account
+
+To access the administrator features, seed the default admin account by running:
+
+```bash
+npm run seed:admin
+```
+
+This creates the following administrator account if it does not already exist:
+
+| Field | Value |
+|-------|-------|
+| Email | `admin@example.com` |
+| Password | `Admin@123` |
+| Role | `ADMIN` |
+
+The admin account can be used to access protected inventory management features, including:
+
+- Create vehicles
+- Update vehicle details
+- Delete vehicles
+- Restock inventory
+
 ---
 
 ## Frontend Setup
