@@ -12,6 +12,7 @@ const vehicleController = new VehicleController();
 router.post(
   '/',
   authMiddleware.handle.bind(authMiddleware),
+  adminMiddleware,
   vehicleController.create.bind(vehicleController),
 );
 
@@ -36,6 +37,7 @@ router.get(
 router.put(
   '/:id',
   authMiddleware.handle.bind(authMiddleware),
+  adminMiddleware,
   vehicleController.update.bind(vehicleController),
 );
 
