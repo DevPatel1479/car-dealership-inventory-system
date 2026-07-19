@@ -12,11 +12,22 @@ export function LoginForm({
 }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   function handleSubmit(
     event: React.FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
+
+    if (!email || !password) {
+      setError(
+        'Email and password are required',
+      );
+
+      return;
+    }
+
+    setError('');
 
     onSubmit?.({
       email,
@@ -35,9 +46,9 @@ export function LoginForm({
         name="email"
         type="email"
         value={email}
-        onChange={(event) =>
-          setEmail(event.target.value)
-        }
+        onChange={(event) => {
+          setEmail(event.target.value);
+        }}
       />
 
       <label htmlFor="password">
@@ -49,10 +60,16 @@ export function LoginForm({
         name="password"
         type="password"
         value={password}
-        onChange={(event) =>
-          setPassword(event.target.value)
-        }
+        onChange={(event) => {
+          setPassword(event.target.value);
+        }}
       />
+
+      {error && (
+        <p role="alert">
+          {error}
+        </p>
+      )}
 
       <button type="submit">
         Login
