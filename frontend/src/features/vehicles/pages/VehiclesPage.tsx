@@ -9,29 +9,31 @@ import Sidebar from "../../../components/layout/Sidebar";
 
 export default function VehiclesPage() {
     return (
-
-        <>
+        <div className="min-h-screen bg-slate-100">
             <Navbar />
 
-            <div className="flex min-h-screen">
+            <div className="flex">
                 <Sidebar />
 
                 <PageContainer>
                     <DashboardHeader
                         title="Vehicle Inventory"
-                        subtitle="Manage your dealership inventory."
+                        subtitle="Manage your dealership inventory"
                     />
 
-                    <div className="mt-8 space-y-8">
-                        <VehicleSearch />
+                    <div className="mt-8 grid gap-8 xl:grid-cols-12">
+                        <aside className="space-y-8 xl:col-span-4">
+                            <VehicleSearch />
 
-                        <VehicleForm />
+                            <VehicleForm />
+                        </aside>
 
-                        <VehicleList />
+                        <section className="xl:col-span-8">
+                            <VehicleList />
+                        </section>
                     </div>
                 </PageContainer>
             </div>
-
-        </>
+        </div>
     );
 }
