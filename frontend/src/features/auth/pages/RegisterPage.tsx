@@ -17,8 +17,10 @@ export default function RegisterPage() {
     }
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-gray-100">
-            <RegisterForm onSubmit={handleRegister} />
+        <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900">
+            <div className="mx-auto flex min-h-screen max-w-7xl items-center justify-center px-6 py-10">
+                <RegisterForm onSubmit={handleRegister} />
+            </div>
         </main>
     );
 }
