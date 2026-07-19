@@ -1,23 +1,31 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+
+import { useAuth } from "../context/AuthContext";
 
 interface RegisterFormProps {
     onSubmit?: (credentials: {
         name: string;
         email: string;
         password: string;
-    }) => void;
+    }) => Promise<unknown> | void;
 }
 
 export function RegisterForm({
     onSubmit,
 }: RegisterFormProps) {
+    const {
+        register
+    } = useAuth();
+
+    const navigate = useNavigate();
+
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    function handleSubmit(
+    async function handleSubmit(
         event: React.FormEvent<HTMLFormElement>,
     ) {
         event.preventDefault();
@@ -39,11 +47,25 @@ export function RegisterForm({
 
         setError("");
 
-        onSubmit?.({
-            name,
-            email,
-            password,
-        });
+
+        if (onSubmit) {
+
+            await onSubmit({
+                name,
+                email,
+                password,
+            });
+
+        } else {
+
+            await register({
+                name,
+                email,
+                password,
+            });
+
+            navigate("/login");
+        }
     }
 
     return (

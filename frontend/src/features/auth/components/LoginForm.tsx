@@ -1,5 +1,8 @@
-import { Link } from "react-router-dom";
+
 import { useState } from "react";
+
+import { useAuth } from "../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
   onSubmit?: (
@@ -10,37 +13,74 @@ interface LoginFormProps {
   ) => Promise<unknown> | void;
 }
 
+
 export function LoginForm({ onSubmit }: LoginFormProps) {
+
+  const {
+    login
+  } = useAuth();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+
   async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>,
   ) {
+
     event.preventDefault();
+
 
     if (!email || !password) {
       setError("Email and password are required");
       return;
     }
 
+
     setError("");
     setIsSubmitting(true);
 
+
     try {
-      await onSubmit?.({
-        email,
-        password,
-      });
+
+
+      if (onSubmit) {
+
+        // Used by tests
+        await onSubmit({
+          email,
+          password,
+        });
+
+
+      } else {
+
+
+        // Real backend integration
+        await login({
+          email,
+          password,
+        });
+
+        navigate("/vehicles");
+      }
+
+
     } finally {
+
       setIsSubmitting(false);
+
     }
+
   }
+
 
   return (
     <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
+
       <h1 className="mb-2 text-center text-3xl font-bold">
         Welcome Back
       </h1>
@@ -49,10 +89,12 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
         Login to your dealership dashboard.
       </p>
 
+
       <form
         onSubmit={handleSubmit}
         className="space-y-5"
       >
+
         <div>
           <label
             htmlFor="email"
@@ -60,6 +102,7 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
           >
             Email
           </label>
+
 
           <input
             id="email"
@@ -71,15 +114,20 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
             }
             className="w-full rounded-lg border px-4 py-3 focus:border-blue-500 focus:outline-none"
           />
+
         </div>
 
+
+
         <div>
+
           <label
             htmlFor="password"
             className="mb-2 block font-medium"
           >
             Password
           </label>
+
 
           <input
             id="password"
@@ -91,7 +139,10 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
             }
             className="w-full rounded-lg border px-4 py-3 focus:border-blue-500 focus:outline-none"
           />
+
         </div>
+
+
 
         {error && (
           <p
@@ -102,24 +153,36 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
           </p>
         )}
 
+
+
         <button
           type="submit"
           disabled={isSubmitting}
           className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
         >
+
           {isSubmitting ? "Logging in..." : "Login"}
+
         </button>
 
+
+
         <p className="text-center text-sm text-gray-600">
+
           Don't have an account?{" "}
+
           <Link
             to="/register"
             className="font-semibold text-blue-600 hover:underline"
           >
             Register
           </Link>
+
         </p>
+
+
       </form>
+
     </div>
   );
 }

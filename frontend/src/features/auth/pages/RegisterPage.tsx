@@ -1,26 +1,17 @@
-import { useNavigate } from "react-router-dom";
-
-import { registerUser } from "../api/auth.api";
 import { RegisterForm } from "../components/RegisterForm";
 
+
 export default function RegisterPage() {
-    const navigate = useNavigate();
-
-    async function handleRegister(credentials: {
-        name: string;
-        email: string;
-        password: string;
-    }) {
-        await registerUser(credentials);
-
-        navigate("/login");
-    }
 
     return (
         <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900">
+
             <div className="mx-auto flex min-h-screen max-w-7xl items-center justify-center px-6 py-10">
-                <RegisterForm onSubmit={handleRegister} />
+
+                <RegisterForm />
+
             </div>
+
         </main>
     );
 }
