@@ -1,40 +1,27 @@
-import {
-    Route,
-    Routes,
-} from "react-router-dom";
+import { Route, Routes } from 'react-router-dom';
 
+import PublicRoute from './PublicRoute';
+import ProtectedRoute from '../guards/ProtectedRoute';
+import AdminRoute from '../guards/AdminRoute';
 
-import PublicRoute from "./PublicRoute";
-import ProtectedRoute from "../guards/ProtectedRoute";
-import AdminRoute from "../guards/AdminRoute";
+import LandingPage from './LandingPage';
 
+import LoginPage from '../features/auth/pages/LoginPage';
+import RegisterPage from '../features/auth/pages/RegisterPage';
 
-import LandingPage from "./LandingPage";
+import VehiclesPage from '../features/vehicles/pages/VehiclesPage';
 
-import LoginPage from "../features/auth/pages/LoginPage";
-import RegisterPage from "../features/auth/pages/RegisterPage";
+import VehicleEditPage from '../features/vehicles/pages/VehicleEditPage';
 
-import VehiclesPage from "../features/vehicles/pages/VehiclesPage";
+import VehicleRestockPage from '../features/vehicles/pages/VehicleRestockPage';
 
-import VehicleEditPage from "../features/vehicles/pages/VehicleEditPage";
-
-import VehicleRestockPage from "../features/vehicles/pages/VehicleRestockPage";
-
-import NotFoundPage from "./NotFoundPage";
-import VehicleCreatePage from "../features/vehicles/pages/VehicleCreatePage";
-
-
+import NotFoundPage from './NotFoundPage';
+import VehicleCreatePage from '../features/vehicles/pages/VehicleCreatePage';
 
 export default function AppRouter() {
-
-
     return (
-
         <Routes>
-
-
             {/* PUBLIC ROUTES */}
-
 
             <Route
                 path="/"
@@ -45,7 +32,6 @@ export default function AppRouter() {
                 }
             />
 
-
             <Route
                 path="/login"
                 element={
@@ -54,7 +40,6 @@ export default function AppRouter() {
                     </PublicRoute>
                 }
             />
-
 
             <Route
                 path="/register"
@@ -65,55 +50,23 @@ export default function AppRouter() {
                 }
             />
 
-
-
             {/* USER + ADMIN ROUTES */}
 
-
             <Route element={<ProtectedRoute />}>
-
-                <Route
-                    path="/vehicles"
-                    element={<VehiclesPage />}
-                />
-
-
+                <Route path="/vehicles" element={<VehiclesPage />} />
 
                 {/* ADMIN ONLY */}
 
-
                 <Route element={<AdminRoute />}>
+                    <Route path="/vehicles/create" element={<VehicleCreatePage />} />
 
-                    <Route
-                        path="/vehicles/create"
-                        element={<VehicleCreatePage />}
-                    />
+                    <Route path="/vehicles/:id/edit" element={<VehicleEditPage />} />
 
-
-                    <Route
-                        path="/vehicles/:id/edit"
-                        element={<VehicleEditPage />}
-                    />
-
-
-                    <Route
-                        path="/vehicles/:id/restock"
-                        element={<VehicleRestockPage />}
-                    />
+                    <Route path="/vehicles/:id/restock" element={<VehicleRestockPage />} />
                 </Route>
-
             </Route>
 
-
-
-            <Route
-                path="*"
-                element={<NotFoundPage />}
-            />
-
-
+            <Route path="*" element={<NotFoundPage />} />
         </Routes>
-
     );
-
 }

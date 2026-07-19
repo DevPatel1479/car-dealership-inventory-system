@@ -1,32 +1,17 @@
-import { Navigate } from "react-router-dom";
+import { Navigate } from 'react-router-dom';
 
-import { getToken } from "../features/auth/services/auth.storage";
-
+import { getToken } from '../features/auth/services/auth.storage';
 
 interface PublicRouteProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
+export default function PublicRoute({ children }: PublicRouteProps) {
+  const token = getToken();
 
-export default function PublicRoute({
-    children,
-}: PublicRouteProps) {
+  if (token) {
+    return <Navigate to="/vehicles" replace />;
+  }
 
-    const token = getToken();
-
-
-    if (token) {
-
-        return (
-            <Navigate
-                to="/vehicles"
-                replace
-            />
-        );
-
-    }
-
-
-    return children;
-
+  return children;
 }

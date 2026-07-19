@@ -1,33 +1,15 @@
 // Protects admin-only routes.
 
-import {
-    Navigate,
-    Outlet,
-} from "react-router-dom";
+import { Navigate, Outlet } from 'react-router-dom';
 
-import {
-    isAdmin,
-} from "../features/auth/services/auth.role";
-
+import { isAdmin } from '../features/auth/services/auth.role';
 
 export default function AdminRoute() {
+  const admin = isAdmin();
 
+  if (!admin) {
+    return <Navigate to="/vehicles" replace />;
+  }
 
-    const admin = isAdmin();
-
-
-    if (!admin) {
-
-        return (
-            <Navigate
-                to="/vehicles"
-                replace
-            />
-        );
-
-    }
-
-
-    return <Outlet />;
-
+  return <Outlet />;
 }

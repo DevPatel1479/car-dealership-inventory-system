@@ -2,164 +2,100 @@ import { useEffect, useState } from 'react';
 
 import VehicleList from '../components/VehicleList';
 import VehicleSearch from '../components/VehicleSearch';
-import VehicleForm from '../components/VehicleForm';
 
-
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/layout/Navbar';
 import DashboardHeader from '../../../components/layout/DashboardHeader';
 
-import {
-    getVehicles,
-    searchVehicles,
-    type Vehicle,
-} from '../api/vehicle.api';
+import { getVehicles, searchVehicles, type Vehicle } from '../api/vehicle.api';
 
 import { isAdmin } from '../../auth/services/auth.role';
 
-
 export default function VehiclesPage() {
+  const admin = isAdmin();
 
-    const admin = isAdmin();
+  const navigate = useNavigate();
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 
-    const navigate = useNavigate();
-    const [
-        vehicles,
-        setVehicles
-    ] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  async function loadVehicles() {
+    setLoading(true);
 
-    const [
-        loading,
-        setLoading
-    ] = useState(true);
+    const response = await getVehicles();
 
+    setVehicles(response);
 
+    setLoading(false);
+  }
 
-    async function loadVehicles() {
+  useEffect(() => {
+    loadVehicles();
+  }, []);
 
-        setLoading(true);
+  function handlePurchaseUpdate(id: string) {
+    setVehicles((previous) =>
+      previous.map((vehicle) =>
+        vehicle.id === id
+          ? {
+              ...vehicle,
+              quantity: vehicle.quantity - 1,
+            }
+          : vehicle,
+      ),
+    );
+  }
 
-        const response =
-            await getVehicles();
+  async function handleSearch(filters: {
+    make?: string;
+    model?: string;
+    category?: string;
+    minPrice?: number;
+    maxPrice?: number;
+  }) {
+    const response = await searchVehicles(filters);
 
-        setVehicles(response);
+    setVehicles(response);
+  }
 
-        setLoading(false);
-    }
+  function handleDeleteUpdate(id: string) {
+    setVehicles((previous) => previous.filter((vehicle) => vehicle.id !== id));
+  }
 
+  return (
+    <div className="min-h-screen bg-slate-100">
+      <Navbar />
 
-
-    useEffect(() => {
-
-        loadVehicles();
-
-    }, []);
-
-
-
-
-    function handlePurchaseUpdate(
-        id: string
-    ) {
-
-        setVehicles(previous =>
-            previous.map(vehicle =>
-                vehicle.id === id
-                    ?
-                    {
-                        ...vehicle,
-                        quantity:
-                            vehicle.quantity - 1
-                    }
-                    :
-                    vehicle
-            )
-        );
-
-    }
-
-
-
-
-
-    async function handleSearch(filters: {
-        make?: string;
-        model?: string;
-        category?: string;
-        minPrice?: number;
-        maxPrice?: number;
-    }) {
-
-
-        const response =
-            await searchVehicles(filters);
-
-
-        setVehicles(response);
-
-    }
-
-
-
-
-
-    return (
-
-        <div className="min-h-screen bg-slate-100">
-
-
-            <Navbar />
-
-
-            <main
-                className="
+      <main
+        className="
                 mx-auto
                 max-w-7xl
                 px-4
                 py-8
                 "
-            >
+      >
+        <DashboardHeader
+          title={admin ? 'Admin Vehicle Management' : 'Vehicle Inventory'}
 
+          subtitle={
+            admin
+              ? 'Manage dealership inventory and vehicles.'
+              : 'Browse available vehicles and purchase cars.'
+          }
+        />
 
-                <DashboardHeader
-
-                    title={
-                        admin
-                            ?
-                            "Admin Vehicle Management"
-                            :
-                            "Vehicle Inventory"
-                    }
-
-
-                    subtitle={
-                        admin
-                            ?
-                            "Manage dealership inventory and vehicles."
-                            :
-                            "Browse available vehicles and purchase cars."
-                    }
-
-                />
-
-                {
-                    admin && (
-
-                        <div
-                            className="
+        {admin && (
+          <div
+            className="
             mt-6
             flex
             justify-end
             "
-                        >
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    navigate("/vehicles/create")
-                                }
-                                className="
+          >
+            <button
+              type="button"
+              onClick={() => navigate('/vehicles/create')}
+              className="
                 rounded-xl
                 bg-blue-600
                 px-5
@@ -169,71 +105,31 @@ export default function VehiclesPage() {
                 transition
                 hover:bg-blue-700
                 "
-                            >
-                                + Add Vehicle
-                            </button>
+            >
+              + Add Vehicle
+            </button>
+          </div>
+        )}
 
-
-                        </div>
-
-                    )
-                }
-
-
-
-
-
-
-
-
-
-
-                <section
-                    className="
+        <section
+          className="
                     mt-8
                     space-y-8
                     "
-                >
+        >
+          <VehicleSearch onSearch={handleSearch} />
 
+          <VehicleList
+            vehicles={vehicles}
 
-                    <VehicleSearch
+            loading={loading}
 
-                        onSearch={
-                            handleSearch
-                        }
-
-                    />
-
-
-
-                    <VehicleList
-
-                        vehicles={
-                            vehicles
-                        }
-
-                        loading={
-                            loading
-                        }
-
-                        onPurchaseSuccess={
-                            handlePurchaseUpdate
-                        }
-
-                        isAdmin={
-                            admin
-                        }
-
-                    />
-
-
-                </section>
-
-
-            </main>
-
-
-        </div>
-
-    );
+            onPurchaseSuccess={handlePurchaseUpdate}
+            onDeleteSuccess={handleDeleteUpdate}
+            isAdmin={admin}
+          />
+        </section>
+      </main>
+    </div>
+  );
 }

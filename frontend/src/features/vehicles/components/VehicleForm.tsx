@@ -1,392 +1,214 @@
-import {
-    useState,
-} from "react";
+import { useState } from 'react';
 
-import {
-    createVehicle,
-    updateVehicle,
-} from "../api/vehicle.api";
+import { createVehicle, updateVehicle } from '../api/vehicle.api';
 
 interface VehicleFormProps {
+  vehicle?: {
+    id: string;
+    make: string;
+    model: string;
+    category: string;
+    price: number;
+    quantity: number;
+  };
 
-    vehicle?: {
-        id: string;
-        make: string;
-        model: string;
-        category: string;
-        price: number;
-        quantity: number;
-    };
-
-    onSuccess?: () => void;
-
+  onSuccess?: () => void;
 }
 
+export default function VehicleForm({ vehicle, onSuccess }: VehicleFormProps) {
+  const [form, setForm] = useState({
+    make: vehicle?.make ?? '',
 
-export default function VehicleForm({
-    vehicle,
-    onSuccess,
-}: VehicleFormProps) {
+    model: vehicle?.model ?? '',
 
+    category: vehicle?.category ?? '',
 
-    const [form, setForm] = useState({
+    price: vehicle?.price?.toString() ?? '',
 
-        make:
-            vehicle?.make ?? "",
+    quantity: vehicle?.quantity?.toString() ?? '',
+  });
 
-        model:
-            vehicle?.model ?? "",
+  const [loading, setLoading] = useState(false);
 
-        category:
-            vehicle?.category ?? "",
+  const [error, setError] = useState('');
 
-        price:
-            vehicle?.price?.toString() ?? "",
+  const [success, setSuccess] = useState('');
 
-        quantity:
-            vehicle?.quantity?.toString() ?? "",
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setForm({
+      ...form,
 
+      [event.target.name]: event.target.value,
     });
+  }
 
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
 
-    const [loading, setLoading] =
-        useState(false);
+    setError('');
+    setSuccess('');
 
+    if (!form.make || !form.model || !form.category || !form.price || !form.quantity) {
+      setError('All fields are required.');
 
-    const [error, setError] =
-        useState("");
+      return;
+    }
 
+    const price = Number(form.price);
 
-    const [success, setSuccess] =
-        useState("");
+    const quantity = Number(form.quantity);
 
+    if (price <= 0) {
+      setError('Price must be greater than zero.');
 
+      return;
+    }
 
-    function handleChange(
-        event: React.ChangeEvent<HTMLInputElement>
-    ) {
+    if (quantity < 0) {
+      setError('Quantity cannot be negative.');
+
+      return;
+    }
+
+    const payload = {
+      make: form.make,
+
+      model: form.model,
+
+      category: form.category,
+
+      price,
+
+      quantity,
+    };
+
+    try {
+      setLoading(true);
+
+      if (vehicle) {
+        await updateVehicle(vehicle.id, payload);
+
+        setSuccess('Vehicle updated successfully.');
+      } else {
+        await createVehicle(payload);
+
+        setSuccess('Vehicle created successfully.');
 
         setForm({
+          make: '',
 
-            ...form,
+          model: '',
 
-            [event.target.name]:
-                event.target.value,
+          category: '',
 
+          price: '',
+
+          quantity: '',
         });
+      }
 
+      onSuccess?.();
+    } catch (error) {
+      setError('Unable to save vehicle. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-
-
-    async function handleSubmit(
-        event: React.FormEvent
-    ) {
-
-        event.preventDefault();
-
-
-        setError("");
-        setSuccess("");
-
-
-        if (
-            !form.make ||
-            !form.model ||
-            !form.category ||
-            !form.price ||
-            !form.quantity
-        ) {
-
-            setError(
-                "All fields are required."
-            );
-
-            return;
-
-        }
-
-
-
-        const price =
-            Number(form.price);
-
-
-        const quantity =
-            Number(form.quantity);
-
-
-
-        if (price <= 0) {
-
-            setError(
-                "Price must be greater than zero."
-            );
-
-            return;
-
-        }
-
-
-
-        if (quantity < 0) {
-
-            setError(
-                "Quantity cannot be negative."
-            );
-
-            return;
-
-        }
-
-
-
-        const payload = {
-
-            make: form.make,
-
-            model: form.model,
-
-            category: form.category,
-
-            price,
-
-            quantity,
-
-        };
-
-
-
-        try {
-
-            setLoading(true);
-
-
-            if (vehicle) {
-
-                await updateVehicle(
-                    vehicle.id,
-                    payload
-                );
-
-
-                setSuccess(
-                    "Vehicle updated successfully."
-                );
-
-
-            } else {
-
-
-                await createVehicle(
-                    payload
-                );
-
-
-                setSuccess(
-                    "Vehicle created successfully."
-                );
-
-
-                setForm({
-
-                    make: "",
-
-                    model: "",
-
-                    category: "",
-
-                    price: "",
-
-                    quantity: "",
-
-                });
-
-            }
-
-
-
-            onSuccess?.();
-
-
-        } catch (error) {
-
-
-            setError(
-                "Unable to save vehicle. Please try again."
-            );
-
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    }
-
-
-
-
-    return (
-
-        <section
-            className="
+  }
+
+  return (
+    <section
+      className="
                 rounded-2xl
                 bg-white
                 p-8
                 shadow-lg
             "
-        >
-
-
-            <div className="mb-8">
-
-                <h2
-                    className="
+    >
+      <div className="mb-8">
+        <h2
+          className="
                         text-2xl
                         font-bold
                         text-gray-900
                     "
-                >
-                    {
-                        vehicle
-                            ? "Update Vehicle"
-                            : "Create Vehicle"
-                    }
+        >
+          {vehicle ? 'Update Vehicle' : 'Create Vehicle'}
+        </h2>
 
-                </h2>
+        <p className="mt-2 text-gray-500">Add and manage dealership inventory.</p>
+      </div>
 
-
-                <p className="mt-2 text-gray-500">
-
-                    Add and manage dealership inventory.
-
-                </p>
-
-
-            </div>
-
-
-
-            {
-                error && (
-
-                    <div
-                        className="
+      {error && (
+        <div
+          className="
                             mb-5
                             rounded-lg
                             bg-red-100
                             p-3
                             text-red-700
                         "
-                    >
-                        {error}
-                    </div>
+        >
+          {error}
+        </div>
+      )}
 
-                )
-            }
-
-
-
-            {
-                success && (
-
-                    <div
-                        className="
+      {success && (
+        <div
+          className="
                             mb-5
                             rounded-lg
                             bg-green-100
                             p-3
                             text-green-700
                         "
-                    >
-                        {success}
-                    </div>
+        >
+          {success}
+        </div>
+      )}
 
-                )
-            }
-
-
-
-
-            <form
-                onSubmit={handleSubmit}
-                className="space-y-6"
-            >
-
-
-                <div
-                    className="
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div
+          className="
                         grid
                         gap-6
                         md:grid-cols-2
                     "
-                >
+        >
+          {[
+            {
+              name: 'make',
+              label: 'Make',
+            },
+            {
+              name: 'model',
+              label: 'Model',
+            },
+            {
+              name: 'category',
+              label: 'Category',
+            },
+            {
+              name: 'price',
+              label: 'Price',
+            },
+            {
+              name: 'quantity',
+              label: 'Quantity',
+            },
+          ].map((field) => (
+            <label key={field.name} className="space-y-2">
+              <span className="font-medium">{field.label}</span>
 
+              <input
+                name={field.name}
 
-                    {
-                        [
-                            {
-                                name: "make",
-                                label: "Make",
-                            },
-                            {
-                                name: "model",
-                                label: "Model",
-                            },
-                            {
-                                name: "category",
-                                label: "Category",
-                            },
-                            {
-                                name: "price",
-                                label: "Price",
-                            },
-                            {
-                                name: "quantity",
-                                label: "Quantity",
-                            },
-                        ]
-                            .map(field => (
+                value={form[field.name as keyof typeof form]}
 
-                                <label
-                                    key={field.name}
-                                    className="space-y-2"
-                                >
+                onChange={handleChange}
 
-                                    <span className="font-medium">
-                                        {field.label}
-                                    </span>
+                type={field.name === 'price' || field.name === 'quantity' ? 'number' : 'text'}
 
-
-                                    <input
-
-                                        name={field.name}
-
-                                        value={
-                                            form[
-                                            field.name as keyof typeof form
-                                            ]
-                                        }
-
-
-                                        onChange={
-                                            handleChange
-                                        }
-
-
-                                        type={
-                                            field.name === "price" ||
-                                                field.name === "quantity"
-                                                ?
-                                                "number"
-                                                :
-                                                "text"
-                                        }
-
-
-                                        className="
+                className="
                                         w-full
                                         rounded-lg
                                         border
@@ -395,27 +217,17 @@ export default function VehicleForm({
                                         focus:border-blue-500
                                         focus:outline-none
                                     "
+              />
+            </label>
+          ))}
+        </div>
 
-                                    />
+        <button
+          disabled={loading}
 
-                                </label>
+          type="submit"
 
-                            ))
-                    }
-
-
-                </div>
-
-
-
-
-                <button
-
-                    disabled={loading}
-
-                    type="submit"
-
-                    className="
+          className="
                         w-full
                         rounded-xl
                         bg-blue-600
@@ -425,30 +237,10 @@ export default function VehicleForm({
                         hover:bg-blue-700
                         disabled:bg-gray-400
                     "
-
-                >
-
-                    {
-                        loading
-                            ?
-                            "Saving..."
-                            :
-                            vehicle
-                                ?
-                                "Update Vehicle"
-                                :
-                                "Create Vehicle"
-                    }
-
-
-                </button>
-
-
-            </form>
-
-
-        </section>
-
-    );
-
+        >
+          {loading ? 'Saving...' : vehicle ? 'Update Vehicle' : 'Create Vehicle'}
+        </button>
+      </form>
+    </section>
+  );
 }

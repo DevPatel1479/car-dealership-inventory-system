@@ -1,84 +1,61 @@
-import {
-    useEffect,
-    useState,
-} from "react";
+import { useEffect, useState } from 'react';
 
-import {
-    useNavigate,
-    useParams,
-} from "react-router-dom";
+import { useNavigate, useParams } from 'react-router-dom';
 
-import {
-    getVehicleById,
-} from "../api/vehicle.api";
+import { getVehicleById } from '../api/vehicle.api';
 
-import RestockVehicleForm from "../components/RestockVehicleForm";
+import RestockVehicleForm from '../components/RestockVehicleForm';
 
 export default function VehicleRestockPage() {
+  const { id } = useParams();
 
-    const { id } = useParams();
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [vehicle, setVehicle] = useState<any>(null);
 
-    const [vehicle, setVehicle] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-    const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-    const [error, setError] = useState("");
+  useEffect(() => {
+    async function loadVehicle() {
+      if (!id) {
+        return;
+      }
 
-    useEffect(() => {
+      try {
+        const response = await getVehicleById(id);
 
-        async function loadVehicle() {
-
-            if (!id) {
-                return;
-            }
-
-            try {
-
-                const response =
-                    await getVehicleById(id);
-
-                setVehicle(response);
-
-            } catch {
-
-                setError("Unable to load vehicle.");
-
-            } finally {
-
-                setLoading(false);
-
-            }
-
-        }
-
-        loadVehicle();
-
-    }, [id]);
-
-    if (loading) {
-        return <div className="p-8">Loading vehicle...</div>;
+        setVehicle(response);
+      } catch {
+        setError('Unable to load vehicle.');
+      } finally {
+        setLoading(false);
+      }
     }
 
-    if (error) {
-        return <div className="p-8 text-red-600">{error}</div>;
-    }
+    loadVehicle();
+  }, [id]);
 
-    if (!vehicle) {
-        return <div className="p-8 text-red-600">Vehicle not found.</div>;
-    }
+  if (loading) {
+    return <div className="p-8">Loading vehicle...</div>;
+  }
 
-    return (
+  if (error) {
+    return <div className="p-8 text-red-600">{error}</div>;
+  }
 
-        <main className="min-h-screen bg-slate-100 p-8">
+  if (!vehicle) {
+    return <div className="p-8 text-red-600">Vehicle not found.</div>;
+  }
 
-            <div className="mx-auto max-w-3xl">
-
-                <button
-                    type="button"
-                    onClick={() => navigate("/vehicles")}
-                    className="
+  return (
+    <main className="min-h-screen bg-slate-100 p-8">
+      <div className="mx-auto max-w-3xl">
+        <button
+          type="button"
+          onClick={() => navigate('/vehicles')}
+          className="
                         mb-6
                         rounded-lg
                         bg-gray-200
@@ -88,24 +65,16 @@ export default function VehicleRestockPage() {
                         font-medium
                         hover:bg-gray-300
                     "
-                >
-                    ← Back
-                </button>
+        >
+          ← Back
+        </button>
 
-                <RestockVehicleForm
+        <RestockVehicleForm
+          vehicle={vehicle}
 
-                    vehicle={vehicle}
-
-                    onSuccess={() =>
-                        navigate("/vehicles")
-                    }
-
-                />
-
-            </div>
-
-        </main>
-
-    );
-
+          onSuccess={() => navigate('/vehicles')}
+        />
+      </div>
+    </main>
+  );
 }

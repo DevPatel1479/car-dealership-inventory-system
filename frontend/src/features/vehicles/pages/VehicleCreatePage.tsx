@@ -1,47 +1,36 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
-import VehicleForm from "../components/VehicleForm";
+import VehicleForm from '../components/VehicleForm';
 
 export default function VehicleCreatePage() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [showSuccess, setShowSuccess] = useState(false);
 
-    const [showSuccess, setShowSuccess] =
-        useState(false);
+  function handleSuccess() {
+    setShowSuccess(true);
 
-    function handleSuccess() {
+    setTimeout(() => {
+      navigate('/vehicles');
+    }, 1800);
+  }
 
-        setShowSuccess(true);
-
-        setTimeout(() => {
-
-            navigate("/vehicles");
-
-        }, 1800);
-
-    }
-
-    return (
-
-        <div className="min-h-screen bg-slate-100">
-
-            <main
-                className="
+  return (
+    <div className="min-h-screen bg-slate-100">
+      <main
+        className="
                     mx-auto
                     max-w-4xl
                     px-4
                     py-10
                     relative
                 "
-            >
-
-                {
-                    showSuccess && (
-
-                        <div
-                            className="
+      >
+        {showSuccess && (
+          <div
+            className="
                                 fixed
                                 top-6
                                 right-6
@@ -54,22 +43,13 @@ export default function VehicleCreatePage() {
                                 shadow-xl
                                 animate-pulse
                             "
-                        >
-                            ✅ Vehicle created successfully.
-                            Redirecting...
-                        </div>
+          >
+            ✅ Vehicle created successfully. Redirecting...
+          </div>
+        )}
 
-                    )
-                }
-
-                <VehicleForm
-                    onSuccess={handleSuccess}
-                />
-
-            </main>
-
-        </div>
-
-    );
-
+        <VehicleForm onSuccess={handleSuccess} />
+      </main>
+    </div>
+  );
 }

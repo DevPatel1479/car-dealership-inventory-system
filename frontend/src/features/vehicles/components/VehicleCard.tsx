@@ -1,14 +1,13 @@
 import type { Vehicle } from '../api/vehicle.api';
 
-import { useNavigate } from "react-router-dom";
-
-import VehicleRestockButton from './VehicleRestockButton';
-import VehicleDeleteButton from './VehicleDeleteButton';
+import { useNavigate } from 'react-router-dom';
 
 interface VehicleCardProps {
     vehicle: Vehicle;
     onPurchase(id: string): Promise<void>;
+    onDelete(): void;
     isPurchasing: boolean;
+    isDeleting: boolean;
     isAdmin: boolean;
 }
 
@@ -16,21 +15,16 @@ export default function VehicleCard({
     vehicle,
     onPurchase,
     isPurchasing,
+    onDelete,
+    isDeleting,
     isAdmin,
 }: VehicleCardProps) {
-
     const navigate = useNavigate();
-    const formattedPrice =
-        new Intl.NumberFormat(
-            'en-IN',
-            {
-                style: 'currency',
-                currency: 'INR',
-                maximumFractionDigits: 0,
-            }
-        ).format(vehicle.price);
-
-
+    const formattedPrice = new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0,
+    }).format(vehicle.price);
 
     return (
         <article
@@ -50,10 +44,7 @@ export default function VehicleCard({
                 hover:shadow-xl
             "
         >
-
-
             <div>
-
                 <div
                     className="
                         flex
@@ -62,10 +53,7 @@ export default function VehicleCard({
                         gap-4
                     "
                 >
-
                     <div className="min-w-0">
-
-
                         <h2
                             className="
                                 truncate
@@ -76,7 +64,6 @@ export default function VehicleCard({
                         >
                             {vehicle.make} {vehicle.model}
                         </h2>
-
 
                         <span
                             className="
@@ -93,11 +80,7 @@ export default function VehicleCard({
                         >
                             {vehicle.category}
                         </span>
-
-
                     </div>
-
-
 
                     <div
                         className="
@@ -113,15 +96,8 @@ export default function VehicleCard({
                     >
                         {formattedPrice}
                     </div>
-
-
                 </div>
-
-
             </div>
-
-
-
 
             <div
                 className="
@@ -131,8 +107,6 @@ export default function VehicleCard({
                     space-y-4
                 "
             >
-
-
                 <div
                     className="
                         flex
@@ -140,43 +114,24 @@ export default function VehicleCard({
                         justify-between
                     "
                 >
-
                     <div>
-
-                        <p className="text-sm text-gray-500">
-                            Stock
-                        </p>
-
+                        <p className="text-sm text-gray-500">Stock</p>
 
                         <p
                             className={`
                                 text-lg
                                 font-bold
-                                ${vehicle.quantity === 0
-                                    ?
-                                    "text-red-600"
-                                    :
-                                    "text-green-600"
-                                }
+                                ${vehicle.quantity === 0 ? 'text-red-600' : 'text-green-600'}
                             `}
                         >
                             {vehicle.quantity}
                         </p>
-
                     </div>
-
-
-
 
                     <button
                         type="button"
-                        disabled={
-                            vehicle.quantity === 0 ||
-                            isPurchasing
-                        }
-                        onClick={() =>
-                            onPurchase(vehicle.id)
-                        }
+                        disabled={vehicle.quantity === 0 || isPurchasing || isDeleting}
+                        onClick={() => onPurchase(vehicle.id)}
                         className="
                             rounded-xl
                             bg-blue-600
@@ -191,33 +146,15 @@ export default function VehicleCard({
                             disabled:bg-gray-300
                         "
                     >
-
-                        {
-                            isPurchasing
-                                ?
-                                "Purchasing..."
-                                :
-                                vehicle.quantity === 0
-                                    ?
-                                    "Out of Stock"
-                                    :
-                                    "Purchase"
-                        }
-
+                        {isPurchasing ? 'Purchasing...' : vehicle.quantity === 0 ? 'Out of Stock' : 'Purchase'}
                     </button>
-
-
                 </div>
-
-
-
-
 
                 {isAdmin && (
                     <div className="flex flex-wrap gap-3">
-
                         <button
                             type="button"
+                            disabled={isDeleting}
                             onClick={() => navigate(`/vehicles/${vehicle.id}/edit`)}
                             className="
                 rounded-lg
@@ -235,6 +172,7 @@ export default function VehicleCard({
                         </button>
 
                         <button
+                            disabled={isDeleting}
                             type="button"
                             onClick={() => navigate(`/vehicles/${vehicle.id}/restock`)}
                             className="
@@ -252,17 +190,27 @@ export default function VehicleCard({
                             Restock
                         </button>
 
-                        <VehicleDeleteButton
-                            vehicleId={vehicle.id}
-                        />
-
+                        <button
+                            type="button"
+                            disabled={isDeleting}
+                            onClick={onDelete}
+                            className="
+        rounded-lg
+        bg-red-600
+        px-4
+        py-2
+        text-sm
+        font-medium
+        text-white
+        hover:bg-red-700
+        disabled:bg-gray-300
+    "
+                        >
+                            {isDeleting ? 'Deleting...' : 'Delete'}
+                        </button>
                     </div>
                 )}
-
-
             </div>
-
-
         </article>
     );
 }
