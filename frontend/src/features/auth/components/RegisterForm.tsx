@@ -20,6 +20,16 @@ export function RegisterForm() {
                 name="email"
                 type="email"
             />
+
+            <label htmlFor="password">
+                Password
+            </label>
+
+            <input
+                id="password"
+                name="password"
+                type="password"
+            />
         </form>
     );
 }
