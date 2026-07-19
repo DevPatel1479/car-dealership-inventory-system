@@ -19,6 +19,15 @@ export interface CreateVehiclePayload {
 }
 
 
+export interface UpdateVehiclePayload {
+    make: string;
+    model: string;
+    category: string;
+    price: number;
+    quantity: number;
+}
+
+
 export async function getVehicles(): Promise<Vehicle[]> {
 
     const response = await authClient.get(
@@ -36,6 +45,21 @@ export async function createVehicle(
 
     const response = await authClient.post<Vehicle>(
         '/api/vehicles',
+        payload,
+    );
+
+    return response.data;
+}
+
+
+
+export async function updateVehicle(
+    id: string,
+    payload: UpdateVehiclePayload,
+): Promise<Vehicle> {
+
+    const response = await authClient.put<Vehicle>(
+        `/api/vehicles/${id}`,
         payload,
     );
 
