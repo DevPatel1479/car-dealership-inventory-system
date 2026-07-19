@@ -3,18 +3,24 @@ import {
     useState,
 } from 'react';
 
+
 import {
     getVehicles,
     type Vehicle,
 } from '../api/vehicle.api';
+
 
 import {
     purchaseVehicle,
 } from '../../inventory/api/inventory.api';
 
 
+import VehicleCard from './VehicleCard';
+
+
 
 export default function VehicleList() {
+
 
     const [
         vehicles,
@@ -70,35 +76,17 @@ export default function VehicleList() {
                 vehicles.map(
                     (vehicle) => (
 
-                        <div
-                            key={vehicle.id}
-                        >
-
-                            <h2>
-                                {vehicle.make} {vehicle.model}
-                            </h2>
-
-
-                            <p>
-                                ${vehicle.price}
-                            </p>
-
-
-                            <button
-                                disabled={
-                                    vehicle.quantity === 0
-                                }
-                                onClick={() =>
-                                    handlePurchase(
-                                        vehicle.id,
-                                    )
-                                }
-                            >
-                                Purchase
-                            </button>
-
-
-                        </div>
+                        <VehicleCard
+                            key={
+                                vehicle.id
+                            }
+                            vehicle={
+                                vehicle
+                            }
+                            onPurchase={
+                                handlePurchase
+                            }
+                        />
 
                     ),
                 )
