@@ -123,7 +123,7 @@ principles and separation of concerns.
 
 The main layers are:
 
-
+```text
 Backend
 │
 ├── Routes
@@ -147,7 +147,7 @@ Backend
 └── Tests
 └── Unit and integration tests
 
-
+```
 This structure helps maintain:
 
 - Separation of responsibilities
@@ -197,27 +197,23 @@ inventory management.
 
 The frontend follows a modular component-based structure:
 
+```text
 frontend
-│
 ├── src
-│   │
 │   ├── app
 │   │   └── Application setup, routing, providers, and public pages
 │   │
 │   ├── components
 │   │   ├── layout
 │   │   │   └── Shared layout components
-│   │   │
 │   │   └── ui
 │   │       └── Reusable UI components
 │   │
 │   ├── features
 │   │   ├── auth
 │   │   │   └── Authentication APIs, forms, context, pages, and utilities
-│   │   │
 │   │   ├── vehicles
 │   │   │   └── Vehicle APIs, components, and management pages
-│   │   │
 │   │   └── inventory
 │   │       └── Inventory-related API operations
 │   │
@@ -235,7 +231,7 @@ frontend
 │
 └── tests
     └── Feature-based unit and integration tests
-
+```
 This structure provides:
 
 - Reusable components
