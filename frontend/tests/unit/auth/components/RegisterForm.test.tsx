@@ -132,4 +132,54 @@ describe('RegisterForm', () => {
         expect(onSubmit).not.toHaveBeenCalled();
     });
 
+
+    it('should show validation error when password is too short', async () => {
+        const user = userEvent.setup();
+
+        const onSubmit = vi.fn();
+
+        render(
+            <RegisterForm onSubmit={onSubmit} />,
+        );
+
+
+        await user.type(
+            screen.getByRole('textbox', {
+                name: /name/i,
+            }),
+            'John Doe',
+        );
+
+
+        await user.type(
+            screen.getByRole('textbox', {
+                name: /email/i,
+            }),
+            'john@example.com',
+        );
+
+
+        await user.type(
+            screen.getByLabelText(/password/i),
+            '123',
+        );
+
+
+        await user.click(
+            screen.getByRole('button', {
+                name: /register/i,
+            }),
+        );
+
+
+        expect(
+            screen.getByText(
+                /password must be at least 8 characters/i,
+            ),
+        ).toBeInTheDocument();
+
+
+        expect(onSubmit).not.toHaveBeenCalled();
+    });
+
 });
