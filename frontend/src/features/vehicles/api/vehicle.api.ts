@@ -28,6 +28,11 @@ export interface UpdateVehiclePayload {
 }
 
 
+export interface DeleteVehicleResponse {
+    success: boolean;
+}
+
+
 export async function getVehicles(): Promise<Vehicle[]> {
 
     const response = await authClient.get(
@@ -61,6 +66,17 @@ export async function updateVehicle(
     const response = await authClient.put<Vehicle>(
         `/api/vehicles/${id}`,
         payload,
+    );
+
+    return response.data;
+}
+
+export async function deleteVehicle(
+    id: string,
+): Promise<DeleteVehicleResponse> {
+
+    const response = await authClient.delete<DeleteVehicleResponse>(
+        `/api/vehicles/${id}`,
     );
 
     return response.data;
