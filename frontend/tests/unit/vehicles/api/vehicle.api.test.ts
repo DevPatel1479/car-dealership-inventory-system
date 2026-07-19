@@ -54,4 +54,29 @@ describe('Vehicle API', () => {
 
     });
 
+
+    it('should create a new vehicle', async () => {
+
+        const vehicle = {
+            make: 'Toyota',
+            model: 'Camry',
+            category: 'Sedan',
+            price: 25000,
+            quantity: 5,
+        };
+
+
+        const response = await createVehicle(
+            vehicle,
+        );
+
+
+        expect(response)
+            .toEqual({
+                id: '1',
+                ...vehicle,
+            });
+
+    });
+
 });
