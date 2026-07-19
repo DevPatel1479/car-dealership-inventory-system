@@ -45,3 +45,18 @@ export async function searchVehiclesByCategory(
     return response.data;
 
 }
+
+export async function searchVehiclesByPriceRange(
+    minPrice: number,
+    maxPrice: number,
+): Promise<Vehicle[]> {
+
+    const response =
+        await authClient.get<Vehicle[]>(
+            `/api/vehicles/search?minPrice=${minPrice}&maxPrice=${maxPrice}`,
+        );
+
+
+    return response.data;
+
+}
