@@ -1,5 +1,16 @@
-interface Vehicle {
+import { authClient } from '../../auth/api/http';
+
+
+export interface Vehicle {
     id: string;
+    make: string;
+    model: string;
+    category: string;
+    price: number;
+    quantity: number;
+}
+
+export interface CreateVehiclePayload {
     make: string;
     model: string;
     category: string;
@@ -10,15 +21,23 @@ interface Vehicle {
 
 export async function getVehicles(): Promise<Vehicle[]> {
 
-    return [
-        {
-            id: '1',
-            make: 'Toyota',
-            model: 'Camry',
-            category: 'Sedan',
-            price: 25000,
-            quantity: 5,
-        },
-    ];
+    const response = await authClient.get(
+        '/api/vehicles',
+    );
 
+    return response.data;
+
+}
+
+
+export async function createVehicle(
+    payload: CreateVehiclePayload,
+): Promise<Vehicle> {
+
+    const response = await authClient.post<Vehicle>(
+        '/api/vehicles',
+        payload,
+    );
+
+    return response.data;
 }
