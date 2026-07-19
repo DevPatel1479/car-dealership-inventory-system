@@ -8,23 +8,36 @@ import {
     type Vehicle,
 } from '../api/vehicle.api';
 
+import {
+    purchaseVehicle,
+} from '../../inventory/api/inventory.api';
+
 
 
 export default function VehicleList() {
 
-    const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+    const [
+        vehicles,
+        setVehicles,
+    ] = useState<Vehicle[]>([]);
+
+
+
+    async function loadVehicles() {
+
+        const response =
+            await getVehicles();
+
+
+        setVehicles(
+            response,
+        );
+
+    }
+
 
 
     useEffect(() => {
-
-        async function loadVehicles() {
-
-            const response = await getVehicles();
-
-            setVehicles(response);
-
-        }
-
 
         loadVehicles();
 
@@ -32,31 +45,67 @@ export default function VehicleList() {
 
 
 
+
+    async function handlePurchase(
+        id: string,
+    ) {
+
+        await purchaseVehicle(
+            id,
+        );
+
+
+        await loadVehicles();
+
+    }
+
+
+
+
     return (
+
         <div>
 
             {
-                vehicles.map((vehicle) => (
+                vehicles.map(
+                    (vehicle) => (
 
-                    <div
-                        key={vehicle.id}
-                    >
+                        <div
+                            key={vehicle.id}
+                        >
 
-                        <h2>
-                            {vehicle.make} {vehicle.model}
-                        </h2>
+                            <h2>
+                                {vehicle.make} {vehicle.model}
+                            </h2>
 
 
-                        <p>
-                            ${vehicle.price}
-                        </p>
+                            <p>
+                                ${vehicle.price}
+                            </p>
 
-                    </div>
 
-                ))
+                            <button
+                                disabled={
+                                    vehicle.quantity === 0
+                                }
+                                onClick={() =>
+                                    handlePurchase(
+                                        vehicle.id,
+                                    )
+                                }
+                            >
+                                Purchase
+                            </button>
+
+
+                        </div>
+
+                    ),
+                )
             }
 
         </div>
+
     );
 
 }
