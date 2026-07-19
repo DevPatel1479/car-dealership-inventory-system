@@ -119,7 +119,7 @@ describe('LoginForm', () => {
 
     expect(
       screen.getByRole('button', {
-        name: /login/i,
+        name: /logging in/i,
       }),
     ).toBeDisabled();
   });
