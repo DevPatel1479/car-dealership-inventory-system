@@ -6,6 +6,8 @@ import {
     purchaseVehicle,
 } from '../../../../src/features/inventory/api/inventory.api';
 
+import * as authStorage from '../../../../src/features/auth/services/auth.storage';
+
 
 describe('Inventory API', () => {
 
@@ -46,6 +48,57 @@ describe('Inventory API', () => {
         )
             .toHaveBeenCalledWith(
                 `/api/vehicles/${vehicleId}/purchase`,
+            );
+
+    });
+
+    it('should restock a vehicle when admin user is authenticated', async () => {
+
+        const vehicleId = '1';
+
+
+        vi.spyOn(
+            authStorage,
+            'getToken',
+        )
+            .mockReturnValue(
+                'admin-jwt-token',
+            );
+
+
+
+        vi.spyOn(
+            authClient,
+            'post',
+        )
+            .mockResolvedValue({
+                data: {
+                    id: vehicleId,
+                    quantity: 10,
+                },
+            });
+
+
+
+        const response = await restockVehicle(
+            vehicleId,
+        );
+
+
+
+        expect(response)
+            .toEqual({
+                id: vehicleId,
+                quantity: 10,
+            });
+
+
+
+        expect(
+            authClient.post,
+        )
+            .toHaveBeenCalledWith(
+                `/api/vehicles/${vehicleId}/restock`,
             );
 
     });
