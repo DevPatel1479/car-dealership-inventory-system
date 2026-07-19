@@ -16,6 +16,8 @@ export function LoginForm() {
         name="password"
         type="password"
       />
+
+      <button type="submit">Login</button>
     </form>
   );
 }
