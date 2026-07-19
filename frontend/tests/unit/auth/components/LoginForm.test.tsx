@@ -22,4 +22,14 @@ describe('LoginForm', () => {
     ).toBeInTheDocument();
   });
 
+  it('should render the login button', () => {
+    render(<LoginForm />);
+
+    expect(
+      screen.getByRole('button', {
+        name: /login/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
 });
