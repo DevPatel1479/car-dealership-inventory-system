@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { authClient } from '../../../../src/features/auth/api/http';
 
 import {
+    createVehicle,
     getVehicles,
 } from '../../../../src/features/vehicles/api/vehicle.api';
 
@@ -66,16 +67,32 @@ describe('Vehicle API', () => {
         };
 
 
+        vi.spyOn(
+            authClient,
+            'post',
+        )
+            .mockResolvedValue({
+                data: {
+                    id: '1',
+                    ...vehicle,
+                },
+            });
+
+
         const response = await createVehicle(
             vehicle,
         );
 
 
-        expect(response)
-            .toEqual({
-                id: '1',
-                ...vehicle,
-            });
+        expect(response).toEqual({
+            id: '1',
+            make: 'Toyota',
+            model: 'Camry',
+            category: 'Sedan',
+            price: 25000,
+            quantity: 5,
+        });
+
 
     });
 
