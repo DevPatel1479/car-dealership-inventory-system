@@ -18,6 +18,8 @@ import VehiclesPage from "../features/vehicles/pages/VehiclesPage";
 
 import VehicleEditPage from "../features/vehicles/pages/VehicleEditPage";
 
+import VehicleRestockPage from "../features/vehicles/pages/VehicleRestockPage";
+
 import NotFoundPage from "./NotFoundPage";
 import VehicleCreatePage from "../features/vehicles/pages/VehicleCreatePage";
 
@@ -67,7 +69,7 @@ export default function AppRouter() {
 
             {/* USER + ADMIN ROUTES */}
 
-                
+
             <Route element={<ProtectedRoute />}>
 
                 <Route
@@ -93,6 +95,11 @@ export default function AppRouter() {
                         element={<VehicleEditPage />}
                     />
 
+
+                    <Route
+                        path="/vehicles/:id/restock"
+                        element={<VehicleRestockPage />}
+                    />
                 </Route>
 
             </Route>
