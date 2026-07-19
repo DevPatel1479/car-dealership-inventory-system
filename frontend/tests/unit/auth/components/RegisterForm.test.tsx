@@ -83,4 +83,53 @@ describe('RegisterForm', () => {
         });
     });
 
+    it('should show validation error for invalid email format', async () => {
+        const user = userEvent.setup();
+
+        const onSubmit = vi.fn();
+
+        render(
+            <RegisterForm onSubmit={onSubmit} />,
+        );
+
+
+        await user.type(
+            screen.getByRole('textbox', {
+                name: /name/i,
+            }),
+            'John Doe',
+        );
+
+
+        await user.type(
+            screen.getByRole('textbox', {
+                name: /email/i,
+            }),
+            'invalid-email',
+        );
+
+
+        await user.type(
+            screen.getByLabelText(/password/i),
+            'password123',
+        );
+
+
+        await user.click(
+            screen.getByRole('button', {
+                name: /register/i,
+            }),
+        );
+
+
+        expect(
+            screen.getByText(
+                /invalid email format/i,
+            ),
+        ).toBeInTheDocument();
+
+
+        expect(onSubmit).not.toHaveBeenCalled();
+    });
+
 });
