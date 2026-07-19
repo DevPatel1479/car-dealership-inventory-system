@@ -87,4 +87,41 @@ describe('LoginForm', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
+
+  it('should disable login button while submitting credentials', async () => {
+    const user = userEvent.setup();
+
+    const onSubmit = vi.fn(
+      () => new Promise(() => { }),
+    );
+
+    render(
+      <LoginForm onSubmit={onSubmit} />,
+    );
+
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /email/i,
+      }),
+      'john@example.com',
+    );
+
+    await user.type(
+      screen.getByLabelText(/password/i),
+      'password123',
+    );
+
+    await user.click(
+      screen.getByRole('button', {
+        name: /login/i,
+      }),
+    );
+
+    expect(
+      screen.getByRole('button', {
+        name: /login/i,
+      }),
+    ).toBeDisabled();
+  });
+
 });
