@@ -14,11 +14,25 @@ export function RegisterForm({
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
     function handleSubmit(
         event: React.FormEvent<HTMLFormElement>,
     ) {
         event.preventDefault();
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(email)) {
+            setError(
+                'Invalid email format',
+            );
+
+            return;
+        }
+
+        setError('');
 
         onSubmit?.({
             name,
@@ -28,7 +42,7 @@ export function RegisterForm({
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate >
             <label htmlFor="name">
                 Name
             </label>
@@ -70,6 +84,12 @@ export function RegisterForm({
                     setPassword(event.target.value);
                 }}
             />
+
+            {error && (
+                <p role="alert">
+                    {error}
+                </p>
+            )}
 
             <button type="submit">
                 Register
