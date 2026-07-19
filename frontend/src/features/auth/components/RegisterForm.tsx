@@ -30,6 +30,10 @@ export function RegisterForm() {
                 name="password"
                 type="password"
             />
+
+            <button type="submit">
+                Register
+            </button>
         </form>
     );
 }
