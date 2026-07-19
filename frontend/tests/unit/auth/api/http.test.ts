@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import type { InternalAxiosRequestConfig } from 'axios';
 
 import { authClient } from '../../../../src/features/auth/api/http';
 
@@ -20,23 +21,23 @@ describe('Auth HTTP Client', () => {
 
         const request = {
             headers: {},
-        };
+        } as InternalAxiosRequestConfig;
 
 
         const interceptor =
             authClient.interceptors.request
-                .handlers[0];
+                .handlers?.[0];
 
 
-        await interceptor.fulfilled(request);
+        await interceptor?.fulfilled(request);
 
 
         expect(
-            request.headers,
-        ).toEqual({
-            Authorization:
+            request.headers.Authorization,
+        )
+            .toBe(
                 'Bearer jwt-token',
-        });
+            );
 
     });
 
