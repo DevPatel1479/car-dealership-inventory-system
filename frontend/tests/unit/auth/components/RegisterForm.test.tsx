@@ -32,4 +32,14 @@ describe('RegisterForm', () => {
         ).toBeInTheDocument();
     });
 
+    it('should render the register button', () => {
+        render(<RegisterForm />);
+
+        expect(
+            screen.getByRole('button', {
+                name: /register/i,
+            }),
+        ).toBeInTheDocument();
+    });
+
 });
