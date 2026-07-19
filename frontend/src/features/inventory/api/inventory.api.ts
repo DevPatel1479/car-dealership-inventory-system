@@ -7,6 +7,12 @@ export interface PurchaseResponse {
 }
 
 
+export interface RestockResponse {
+    id: string;
+    quantity: number;
+}
+
+
 export async function purchaseVehicle(
     id: string,
 ): Promise<PurchaseResponse> {
@@ -14,6 +20,22 @@ export async function purchaseVehicle(
     const response =
         await authClient.post<PurchaseResponse>(
             `/api/vehicles/${id}/purchase`,
+        );
+
+
+    return response.data;
+
+}
+
+
+
+export async function restockVehicle(
+    id: string,
+): Promise<RestockResponse> {
+
+    const response =
+        await authClient.post<RestockResponse>(
+            `/api/vehicles/${id}/restock`,
         );
 
 
