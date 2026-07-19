@@ -29,6 +29,52 @@ code, and production-level development practices.
 - Vite
 - Tailwind CSS
 
+
+# Getting Started
+
+## Clone the Repository
+
+```bash
+git clone https://github.com/DevPatel1479/car-dealership-inventory-system.git
+cd car-dealership-inventory-system
+```
+
+## Backend Setup
+
+Navigate to the backend directory and install the dependencies:
+
+```bash
+cd backend
+npm install
+```
+
+Create a `.env` file in the `backend` directory and configure the required environment variables, including your MongoDB connection string.
+
+> **Note:** Ensure that MongoDB is installed and running locally (or provide your own MongoDB Atlas connection string) before starting the backend.
+
+Start the backend development server:
+
+```bash
+npm run dev
+```
+
+---
+
+## Frontend Setup
+
+Open a new terminal, navigate to the frontend directory, and install the dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+Start the frontend development server:
+
+```bash
+npm run dev
+```
+
 ## Development Workflow
 
 This project follows:
