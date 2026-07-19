@@ -27,6 +27,12 @@ router.get(
   vehicleController.search.bind(vehicleController),
 );
 
+router.get(
+  '/:id',
+  authMiddleware.handle.bind(authMiddleware),
+  vehicleController.findById.bind(vehicleController),
+);
+
 router.put(
   '/:id',
   authMiddleware.handle.bind(authMiddleware),

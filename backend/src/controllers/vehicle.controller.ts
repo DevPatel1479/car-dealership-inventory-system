@@ -11,7 +11,7 @@ export class VehicleController {
     private readonly vehicleService = new VehicleService(
       new VehicleRepository(),
     ),
-  ) {}
+  ) { }
 
   private getVehicleId(req: Request): string | null {
     const { id } = req.params;
@@ -152,5 +152,22 @@ export class VehicleController {
     } catch (error) {
       next(error);
     }
+  }
+
+  async findById(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
+    const id = this.getVehicleId(req);
+
+    if (!id) {
+      return res.status(400).json({
+        message: 'Vehicle id is required',
+      });
+    }
+
+    const vehicle = await this.vehicleService.findById(id);
+
+    return res.status(200).json(vehicle);
   }
 }

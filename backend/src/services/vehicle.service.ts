@@ -9,7 +9,7 @@ import type {
 import { NotFoundError } from '../errors/not-found.error.js';
 
 export class VehicleService {
-  constructor(private readonly vehicleRepository: any) {}
+  constructor(private readonly vehicleRepository: any) { }
 
   async create(vehicleData: CreateVehiclePayload): Promise<VehicleResponse> {
     if (!vehicleData.make || !vehicleData.model || !vehicleData.category) {
@@ -85,5 +85,20 @@ export class VehicleService {
     }
 
     return this.vehicleRepository.restock(id, quantity);
+  }
+
+
+  async findById(id: string): Promise<VehicleResponse> {
+    if (!id) {
+      throw new ValidationError('Vehicle id is required');
+    }
+
+    const vehicle = await this.vehicleRepository.findById(id);
+
+    if (!vehicle) {
+      throw new NotFoundError('Vehicle not found');
+    }
+
+    return vehicle;
   }
 }
