@@ -13,4 +13,15 @@ describe('RegisterForm', () => {
             }),
         ).toBeInTheDocument();
     });
+
+    it('should render the email input', () => {
+        render(<RegisterForm />);
+
+        expect(
+            screen.getByRole('textbox', {
+                name: /email/i,
+            }),
+        ).toBeInTheDocument();
+    });
+
 });
