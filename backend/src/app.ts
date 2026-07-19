@@ -10,7 +10,7 @@ const app = express();
 
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://car-dealership-inventory-system-hfih.onrender.com/',
+    'https://car-dealership-inventory-system-37tk-k6c4dxose.vercel.app',
 ];
 
 app.use(
