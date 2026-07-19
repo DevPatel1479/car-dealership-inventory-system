@@ -1,23 +1,36 @@
 type DashboardHeaderProps = {
-    title: string;
-    subtitle?: string;
+  title: string;
+  subtitle?: string;
 };
 
-export default function DashboardHeader({
-    title,
-    subtitle,
-}: DashboardHeaderProps) {
-    return (
-        <header className="space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900">
-                {title}
-            </h1>
+export default function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
+  return (
+    <header
+      className="
+mb-8
+"
+    >
+      <h1
+        className="
+text-4xl
+font-bold
+text-gray-900
+"
+      >
+        {title}
+      </h1>
 
-            {subtitle && (
-                <p className="text-gray-600">
-                    {subtitle}
-                </p>
-            )}
-        </header>
-    );
+      {subtitle && (
+        <p
+          className="
+mt-2
+text-gray-500
+max-w-2xl
+"
+        >
+          {subtitle}
+        </p>
+      )}
+    </header>
+  );
 }

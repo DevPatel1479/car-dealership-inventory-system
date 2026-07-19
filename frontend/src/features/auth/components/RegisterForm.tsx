@@ -1,171 +1,152 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from '../context/AuthContext';
 
 interface RegisterFormProps {
-    onSubmit?: (credentials: {
-        name: string;
-        email: string;
-        password: string;
-    }) => Promise<unknown> | void;
+  onSubmit?: (credentials: {
+    name: string;
+    email: string;
+    password: string;
+  }) => Promise<unknown> | void;
 }
 
-export function RegisterForm({
-    onSubmit,
-}: RegisterFormProps) {
-    const {
-        register
-    } = useAuth();
+export function RegisterForm({ onSubmit }: RegisterFormProps) {
+  const { register } = useAuth();
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-    async function handleSubmit(
-        event: React.FormEvent<HTMLFormElement>,
-    ) {
-        event.preventDefault();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-        const emailPattern =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-        if (!emailPattern.test(email)) {
-            setError("Invalid email format");
-            return;
-        }
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
 
-        if (password.length < 8) {
-            setError(
-                "Password must be at least 8 characters",
-            );
-            return;
-        }
-
-        setError("");
-
-
-        if (onSubmit) {
-
-            await onSubmit({
-                name,
-                email,
-                password,
-            });
-
-        } else {
-
-            await register({
-                name,
-                email,
-                password,
-            });
-
-            navigate("/login");
-        }
+    if (!trimmedName) {
+      setError('Name is required');
+      return;
     }
 
-    return (
-        <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
-            <h1 className="mb-2 text-center text-3xl font-bold">
-                Create Account
-            </h1>
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            <p className="mb-8 text-center text-gray-500">
-                Register to manage dealership inventory.
-            </p>
+    if (!emailPattern.test(trimmedEmail)) {
+      setError('Invalid email format');
+      return;
+    }
 
-            <form
-                onSubmit={handleSubmit}
-                noValidate
-                className="space-y-5"
-            >
-                <div>
-                    <label
-                        htmlFor="name"
-                        className="mb-2 block font-medium"
-                    >
-                        Name
-                    </label>
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
 
-                    <input
-                        id="name"
-                        type="text"
-                        value={name}
-                        onChange={(event) =>
-                            setName(event.target.value)
-                        }
-                        className="w-full rounded-lg border px-4 py-3"
-                    />
-                </div>
+    try {
+      setLoading(true);
+      setError('');
 
-                <div>
-                    <label
-                        htmlFor="email"
-                        className="mb-2 block font-medium"
-                    >
-                        Email
-                    </label>
+      const payload = {
+        name: trimmedName,
+        email: trimmedEmail,
+        password,
+      };
 
-                    <input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(event) =>
-                            setEmail(event.target.value)
-                        }
-                        className="w-full rounded-lg border px-4 py-3"
-                    />
-                </div>
+      if (onSubmit) {
+        await onSubmit(payload);
+      } else {
+        await register(payload);
 
-                <div>
-                    <label
-                        htmlFor="password"
-                        className="mb-2 block font-medium"
-                    >
-                        Password
-                    </label>
+        navigate('/login');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Registration failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
-                    <input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={(event) =>
-                            setPassword(event.target.value)
-                        }
-                        className="w-full rounded-lg border px-4 py-3"
-                    />
-                </div>
+  return (
+    <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
+      <h1 className="mb-2 text-center text-3xl font-bold">Create Account</h1>
 
-                {error && (
-                    <p
-                        role="alert"
-                        className="rounded-lg bg-red-100 p-3 text-sm text-red-700"
-                    >
-                        {error}
-                    </p>
-                )}
+      <p className="mb-8 text-center text-gray-500">Register to manage dealership inventory.</p>
 
-                <button
-                    type="submit"
-                    className="w-full rounded-xl bg-green-600 py-3 font-semibold text-white transition hover:bg-green-700"
-                >
-                    Register
-                </button>
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        <div>
+          <label htmlFor="name" className="mb-2 block font-medium">
+            Name
+          </label>
 
-                <p className="text-center text-sm text-gray-600">
-                    Already have an account?{" "}
-                    <Link
-                        to="/login"
-                        className="font-semibold text-blue-600 hover:underline"
-                    >
-                        Login
-                    </Link>
-                </p>
-            </form>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            disabled={loading}
+            onChange={(event) => setName(event.target.value)}
+            className="w-full rounded-lg border px-4 py-3"
+          />
         </div>
-    );
+
+        <div>
+          <label htmlFor="email" className="mb-2 block font-medium">
+            Email
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            value={email}
+            disabled={loading}
+            onChange={(event) => setEmail(event.target.value)}
+            className="w-full rounded-lg border px-4 py-3"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className="mb-2 block font-medium">
+            Password
+          </label>
+
+          <input
+            id="password"
+            type="password"
+            value={password}
+            disabled={loading}
+            onChange={(event) => setPassword(event.target.value)}
+            className="w-full rounded-lg border px-4 py-3"
+          />
+        </div>
+
+        {error && (
+          <p role="alert" className="rounded-lg bg-red-100 p-3 text-sm text-red-700">
+            {error}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-xl bg-green-600 py-3 font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+        >
+          {loading ? 'Creating...' : 'Register'}
+        </button>
+
+        <p className="text-center text-sm text-gray-600">
+          Already have an account?{' '}
+          <Link to="/login" className="font-semibold text-blue-600 hover:underline">
+            Login
+          </Link>
+        </p>
+      </form>
+    </div>
+  );
 }

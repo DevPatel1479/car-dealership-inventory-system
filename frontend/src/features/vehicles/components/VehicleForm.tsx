@@ -1,165 +1,138 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import {
-    createVehicle,
-    updateVehicle,
-} from "../api/vehicle.api";
+import { isAdmin } from '../../auth/services/auth.role';
+
+import { createVehicle, updateVehicle } from '../api/vehicle.api';
 
 interface VehicleFormProps {
-    vehicle?: {
-        id: string;
-        make: string;
-        model: string;
-        category: string;
-        price: number;
-        quantity: number;
-    };
+  vehicle?: {
+    id: string;
+    make: string;
+    model: string;
+    category: string;
+    price: number;
+    quantity: number;
+  };
 }
 
-export default function VehicleForm({
-    vehicle,
-}: VehicleFormProps) {
-    const [form, setForm] = useState({
-        make: vehicle?.make ?? "",
-        model: vehicle?.model ?? "",
-        category: vehicle?.category ?? "",
-        price: vehicle?.price?.toString() ?? "",
-        quantity: vehicle?.quantity?.toString() ?? "",
+export default function VehicleForm({ vehicle }: VehicleFormProps) {
+  const admin = isAdmin();
+
+  const [form, setForm] = useState({
+    make: vehicle?.make ?? '',
+    model: vehicle?.model ?? '',
+    category: vehicle?.category ?? '',
+    price: vehicle?.price?.toString() ?? '',
+    quantity: vehicle?.quantity?.toString() ?? '',
+  });
+  if (!admin) {
+    return null;
+  }
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setForm({
+      ...form,
+      [event.target.name]: event.target.value,
     });
+  }
 
-    function handleChange(
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) {
-        setForm({
-            ...form,
-            [event.target.name]: event.target.value,
-        });
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+
+    const payload = {
+      make: form.make,
+      model: form.model,
+      category: form.category,
+      price: Number(form.price),
+      quantity: Number(form.quantity),
+    };
+
+    if (vehicle) {
+      await updateVehicle(vehicle.id, payload);
+    } else {
+      await createVehicle(payload);
     }
+  }
 
-    async function handleSubmit(
-        event: React.FormEvent,
-    ) {
-        event.preventDefault();
+  return (
+    <section className="rounded-2xl bg-white p-8 shadow-lg">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold">{vehicle ? 'Update Vehicle' : 'Add Vehicle'}</h2>
 
-        const payload = {
-            make: form.make,
-            model: form.model,
-            category: form.category,
-            price: Number(form.price),
-            quantity: Number(form.quantity),
-        };
+        <p className="mt-2 text-gray-500">Manage your dealership inventory.</p>
+      </div>
 
-        if (vehicle) {
-            await updateVehicle(
-                vehicle.id,
-                payload,
-            );
-        } else {
-            await createVehicle(payload);
-        }
-    }
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid gap-6 md:grid-cols-2">
+          <label className="space-y-2">
+            <span className="font-medium">Make</span>
 
-    return (
-        <section className="rounded-2xl bg-white p-8 shadow-lg">
-            <div className="mb-8">
-                <h2 className="text-2xl font-bold">
-                    {vehicle
-                        ? "Update Vehicle"
-                        : "Add Vehicle"}
-                </h2>
+            <input
+              aria-label="Make"
+              name="make"
+              value={form.make}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
+            />
+          </label>
 
-                <p className="mt-2 text-gray-500">
-                    Manage your dealership inventory.
-                </p>
-            </div>
+          <label className="space-y-2">
+            <span className="font-medium">Model</span>
 
-            <form
-                onSubmit={handleSubmit}
-                className="space-y-6"
-            >
-                <div className="grid gap-6 md:grid-cols-2">
-                    <label className="space-y-2">
-                        <span className="font-medium">
-                            Make
-                        </span>
+            <input
+              aria-label="Model"
+              name="model"
+              value={form.model}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
+            />
+          </label>
 
-                        <input
-                            aria-label="Make"
-                            name="make"
-                            value={form.make}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
-                        />
-                    </label>
+          <label className="space-y-2">
+            <span className="font-medium">Category</span>
 
-                    <label className="space-y-2">
-                        <span className="font-medium">
-                            Model
-                        </span>
+            <input
+              aria-label="Category"
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
+            />
+          </label>
 
-                        <input
-                            aria-label="Model"
-                            name="model"
-                            value={form.model}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
-                        />
-                    </label>
+          <label className="space-y-2">
+            <span className="font-medium">Price</span>
 
-                    <label className="space-y-2">
-                        <span className="font-medium">
-                            Category
-                        </span>
+            <input
+              aria-label="Price"
+              name="price"
+              type="number"
+              value={form.price}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
+            />
+          </label>
 
-                        <input
-                            aria-label="Category"
-                            name="category"
-                            value={form.category}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
-                        />
-                    </label>
+          <label className="space-y-2 md:col-span-2">
+            <span className="font-medium">Quantity</span>
 
-                    <label className="space-y-2">
-                        <span className="font-medium">
-                            Price
-                        </span>
+            <input
+              aria-label="Quantity"
+              name="quantity"
+              type="number"
+              value={form.quantity}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
+            />
+          </label>
+        </div>
 
-                        <input
-                            aria-label="Price"
-                            name="price"
-                            type="number"
-                            value={form.price}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
-                        />
-                    </label>
-
-                    <label className="space-y-2 md:col-span-2">
-                        <span className="font-medium">
-                            Quantity
-                        </span>
-
-                        <input
-                            aria-label="Quantity"
-                            name="quantity"
-                            type="number"
-                            value={form.quantity}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
-                        />
-                    </label>
-                </div>
-
-                <button
-                    type="submit"
-                    className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
-                >
-                    {vehicle
-                        ? "Update Vehicle"
-                        : "Create Vehicle"}
-                </button>
-            </form>
-        </section>
-    );
+        <button
+          type="submit"
+          className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
+        >
+          {vehicle ? 'Update Vehicle' : 'Create Vehicle'}
+        </button>
+      </form>
+    </section>
+  );
 }
