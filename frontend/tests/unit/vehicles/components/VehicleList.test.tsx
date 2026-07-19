@@ -1,70 +1,48 @@
-import {
-    describe,
-    expect,
-    it,
-    vi,
-} from 'vitest';
-
-import {
-    render,
-    screen,
-} from '@testing-library/react';
-
+import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 import VehicleList from '../../../../src/features/vehicles/components/VehicleList';
 
+describe('VehicleList', () => {
+  it('should display available vehicles', () => {
+    render(
+      <MemoryRouter>
+        <VehicleList
+          vehicles={[
+            {
+              id: '1',
+              make: 'Toyota',
+              model: 'Camry',
+              category: 'Sedan',
+              price: 25000,
+              quantity: 5,
+            },
+          ]}
+          loading={false}
+          onPurchaseSuccess={vi.fn()}
+          onDeleteSuccess={vi.fn()}
+          isAdmin={false}
+        />
+      </MemoryRouter>,
+    );
 
-import * as vehicleApi from '../../../../src/features/vehicles/api/vehicle.api';
+    expect(
+      screen.getByText('Toyota Camry'),
+    ).toBeInTheDocument();
 
+    expect(
+      screen.getByText(/₹25,000/),
+    ).toBeInTheDocument();
 
+    expect(
+      screen.getByText('Sedan'),
+    ).toBeInTheDocument();
 
-describe('VehicleList Component', () => {
-
-
-    it('should display available vehicles', async () => {
-
-
-        vi.spyOn(
-            vehicleApi,
-            'getVehicles',
-        )
-            .mockResolvedValue([
-                {
-                    id: '1',
-                    make: 'Toyota',
-                    model: 'Camry',
-                    category: 'Sedan',
-                    price: 25000,
-                    quantity: 5,
-                },
-            ]);
-
-
-
-        render(
-            <VehicleList />,
-        );
-
-
-
-        expect(
-            await screen.findByText(
-                'Toyota Camry',
-            ),
-        )
-            .toBeInTheDocument();
-
-
-
-        expect(
-            screen.getByText(
-                '$25000',
-            ),
-        )
-            .toBeInTheDocument();
-
-
-    });
-
-
+    expect(
+      screen.getByRole('button', {
+        name: 'Purchase',
+      }),
+    ).toBeInTheDocument();
+  });
 });

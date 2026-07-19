@@ -1,44 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { InternalAxiosRequestConfig } from 'axios';
 
-import { authClient } from '../../../../src/features/auth/api/http';
+import { authClient } from '../../../../src/lib/http';
 
 import * as authStorage from '../../../../src/features/auth/services/auth.storage';
 
-
 describe('Auth HTTP Client', () => {
+  it('should attach jwt token to authenticated api requests', async () => {
+    vi.spyOn(authStorage, 'getToken').mockReturnValue('jwt-token');
 
-    it('should attach jwt token to authenticated api requests', async () => {
+    const request = {
+      headers: {},
+    } as InternalAxiosRequestConfig;
 
-        vi.spyOn(
-            authStorage,
-            'getToken',
-        )
-            .mockReturnValue(
-                'jwt-token',
-            );
+    const interceptor = authClient.interceptors.request.handlers?.[0];
 
+    await interceptor?.fulfilled(request);
 
-        const request = {
-            headers: {},
-        } as InternalAxiosRequestConfig;
-
-
-        const interceptor =
-            authClient.interceptors.request
-                .handlers?.[0];
-
-
-        await interceptor?.fulfilled(request);
-
-
-        expect(
-            request.headers.Authorization,
-        )
-            .toBe(
-                'Bearer jwt-token',
-            );
-
-    });
-
+    expect(request.headers.Authorization).toBe('Bearer jwt-token');
+  });
 });

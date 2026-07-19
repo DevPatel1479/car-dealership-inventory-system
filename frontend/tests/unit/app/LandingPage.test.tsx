@@ -1,73 +1,51 @@
-import {
-    describe,
-    expect,
-    it,
-} from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import {
-    render,
-    screen,
-} from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+
+import { MemoryRouter } from 'react-router-dom';
 
 import LandingPage from '../../../src/app/LandingPage';
 
-
 describe('LandingPage', () => {
+  it('should render the application title', () => {
+    render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>,
+    );
 
-    it('should render the application title', () => {
+    expect(
+      screen.getByRole('heading', {
+        name: /find and manage yourdream vehicle/i,
+      }),
+    ).toBeInTheDocument();
+  });
 
-        render(
-            <LandingPage />,
-        );
+  it('should render a login button', () => {
+    render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>,
+    );
 
-        expect(
-            screen.getByRole(
-                'heading',
-                {
-                    name: 'Car Dealership Inventory System',
-                },
-            ),
-        )
-            .toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: 'Login',
+      }),
+    ).toBeInTheDocument();
+  });
 
-    });
+  it('should render a register button', () => {
+    render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>,
+    );
 
-
-    it('should render a login button', () => {
-
-        render(
-            <LandingPage />,
-        );
-
-        expect(
-            screen.getByRole(
-                'button',
-                {
-                    name: 'Login',
-                },
-            ),
-        )
-            .toBeInTheDocument();
-
-    });
-
-
-    it('should render a register button', () => {
-
-        render(
-            <LandingPage />,
-        );
-
-        expect(
-            screen.getByRole(
-                'button',
-                {
-                    name: 'Register',
-                },
-            ),
-        )
-            .toBeInTheDocument();
-
-    });
-
+    expect(
+      screen.getByRole('button', {
+        name: 'Register',
+      }),
+    ).toBeInTheDocument();
+  });
 });

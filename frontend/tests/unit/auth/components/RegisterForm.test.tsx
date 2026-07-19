@@ -4,182 +4,143 @@ import userEvent from '@testing-library/user-event';
 import { RegisterForm } from '../../../../src/features/auth/components/RegisterForm';
 
 describe('RegisterForm', () => {
-    it('should render the name input', () => {
-        render(<RegisterForm />);
+  it('should render the name input', () => {
+    render(<RegisterForm />);
 
-        expect(
-            screen.getByRole('textbox', {
-                name: /name/i,
-            }),
-        ).toBeInTheDocument();
+    expect(
+      screen.getByRole('textbox', {
+        name: /name/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it('should render the email input', () => {
+    render(<RegisterForm />);
+
+    expect(
+      screen.getByRole('textbox', {
+        name: /email/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it('should render the password input', () => {
+    render(<RegisterForm />);
+
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+  });
+
+  it('should render the register button', () => {
+    render(<RegisterForm />);
+
+    expect(
+      screen.getByRole('button', {
+        name: /register/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it('should submit the entered registration credentials', async () => {
+    const user = userEvent.setup();
+
+    const onSubmit = vi.fn();
+
+    render(<RegisterForm onSubmit={onSubmit} />);
+
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /name/i,
+      }),
+      'John Doe',
+    );
+
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /email/i,
+      }),
+      'john@example.com',
+    );
+
+    await user.type(screen.getByLabelText(/password/i), 'password123');
+
+    await user.click(
+      screen.getByRole('button', {
+        name: /register/i,
+      }),
+    );
+
+    expect(onSubmit).toHaveBeenCalledWith({
+      name: 'John Doe',
+      email: 'john@example.com',
+      password: 'password123',
     });
+  });
 
-    it('should render the email input', () => {
-        render(<RegisterForm />);
+  it('should show validation error for invalid email format', async () => {
+    const user = userEvent.setup();
 
-        expect(
-            screen.getByRole('textbox', {
-                name: /email/i,
-            }),
-        ).toBeInTheDocument();
-    });
+    const onSubmit = vi.fn();
 
-    it('should render the password input', () => {
-        render(<RegisterForm />);
+    render(<RegisterForm onSubmit={onSubmit} />);
 
-        expect(
-            screen.getByLabelText(/password/i),
-        ).toBeInTheDocument();
-    });
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /name/i,
+      }),
+      'John Doe',
+    );
 
-    it('should render the register button', () => {
-        render(<RegisterForm />);
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /email/i,
+      }),
+      'invalid-email',
+    );
 
-        expect(
-            screen.getByRole('button', {
-                name: /register/i,
-            }),
-        ).toBeInTheDocument();
-    });
+    await user.type(screen.getByLabelText(/password/i), 'password123');
 
-    it('should submit the entered registration credentials', async () => {
-        const user = userEvent.setup();
+    await user.click(
+      screen.getByRole('button', {
+        name: /register/i,
+      }),
+    );
 
-        const onSubmit = vi.fn();
+    expect(screen.getByText(/invalid email format/i)).toBeInTheDocument();
 
-        render(
-            <RegisterForm onSubmit={onSubmit} />,
-        );
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
 
-        await user.type(
-            screen.getByRole('textbox', {
-                name: /name/i,
-            }),
-            'John Doe',
-        );
+  it('should show validation error when password is too short', async () => {
+    const user = userEvent.setup();
 
-        await user.type(
-            screen.getByRole('textbox', {
-                name: /email/i,
-            }),
-            'john@example.com',
-        );
+    const onSubmit = vi.fn();
 
-        await user.type(
-            screen.getByLabelText(/password/i),
-            'password123',
-        );
+    render(<RegisterForm onSubmit={onSubmit} />);
 
-        await user.click(
-            screen.getByRole('button', {
-                name: /register/i,
-            }),
-        );
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /name/i,
+      }),
+      'John Doe',
+    );
 
-        expect(onSubmit).toHaveBeenCalledWith({
-            name: 'John Doe',
-            email: 'john@example.com',
-            password: 'password123',
-        });
-    });
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /email/i,
+      }),
+      'john@example.com',
+    );
 
-    it('should show validation error for invalid email format', async () => {
-        const user = userEvent.setup();
+    await user.type(screen.getByLabelText(/password/i), '123');
 
-        const onSubmit = vi.fn();
+    await user.click(
+      screen.getByRole('button', {
+        name: /register/i,
+      }),
+    );
 
-        render(
-            <RegisterForm onSubmit={onSubmit} />,
-        );
+    expect(screen.getByText(/password must be at least 8 characters/i)).toBeInTheDocument();
 
-
-        await user.type(
-            screen.getByRole('textbox', {
-                name: /name/i,
-            }),
-            'John Doe',
-        );
-
-
-        await user.type(
-            screen.getByRole('textbox', {
-                name: /email/i,
-            }),
-            'invalid-email',
-        );
-
-
-        await user.type(
-            screen.getByLabelText(/password/i),
-            'password123',
-        );
-
-
-        await user.click(
-            screen.getByRole('button', {
-                name: /register/i,
-            }),
-        );
-
-
-        expect(
-            screen.getByText(
-                /invalid email format/i,
-            ),
-        ).toBeInTheDocument();
-
-
-        expect(onSubmit).not.toHaveBeenCalled();
-    });
-
-
-    it('should show validation error when password is too short', async () => {
-        const user = userEvent.setup();
-
-        const onSubmit = vi.fn();
-
-        render(
-            <RegisterForm onSubmit={onSubmit} />,
-        );
-
-
-        await user.type(
-            screen.getByRole('textbox', {
-                name: /name/i,
-            }),
-            'John Doe',
-        );
-
-
-        await user.type(
-            screen.getByRole('textbox', {
-                name: /email/i,
-            }),
-            'john@example.com',
-        );
-
-
-        await user.type(
-            screen.getByLabelText(/password/i),
-            '123',
-        );
-
-
-        await user.click(
-            screen.getByRole('button', {
-                name: /register/i,
-            }),
-        );
-
-
-        expect(
-            screen.getByText(
-                /password must be at least 8 characters/i,
-            ),
-        ).toBeInTheDocument();
-
-
-        expect(onSubmit).not.toHaveBeenCalled();
-    });
-
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
 });

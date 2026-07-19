@@ -3,32 +3,32 @@ import type { Vehicle } from '../api/vehicle.api';
 import { useNavigate } from 'react-router-dom';
 
 interface VehicleCardProps {
-    vehicle: Vehicle;
-    onPurchase(id: string): Promise<void>;
-    onDelete(): void;
-    isPurchasing: boolean;
-    isDeleting: boolean;
-    isAdmin: boolean;
+  vehicle: Vehicle;
+  onPurchase(id: string): Promise<void>;
+  onDelete(): void;
+  isPurchasing: boolean;
+  isDeleting: boolean;
+  isAdmin: boolean;
 }
 
 export default function VehicleCard({
-    vehicle,
-    onPurchase,
-    isPurchasing,
-    onDelete,
-    isDeleting,
-    isAdmin,
+  vehicle,
+  onPurchase,
+  isPurchasing,
+  onDelete,
+  isDeleting,
+  isAdmin,
 }: VehicleCardProps) {
-    const navigate = useNavigate();
-    const formattedPrice = new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        maximumFractionDigits: 0,
-    }).format(vehicle.price);
+  const navigate = useNavigate();
+  const formattedPrice = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(vehicle.price);
 
-    return (
-        <article
-            className="
+  return (
+    <article
+      className="
                 flex
                 min-h-[260px]
                 flex-col
@@ -43,30 +43,30 @@ export default function VehicleCard({
                 hover:-translate-y-1
                 hover:shadow-xl
             "
-        >
-            <div>
-                <div
-                    className="
+    >
+      <div>
+        <div
+          className="
                         flex
                         items-start
                         justify-between
                         gap-4
                     "
-                >
-                    <div className="min-w-0">
-                        <h2
-                            className="
+        >
+          <div className="min-w-0">
+            <h2
+              className="
                                 truncate
                                 text-xl
                                 font-bold
                                 text-gray-900
                             "
-                        >
-                            {vehicle.make} {vehicle.model}
-                        </h2>
+            >
+              {vehicle.make} {vehicle.model}
+            </h2>
 
-                        <span
-                            className="
+            <span
+              className="
                                 mt-3
                                 inline-flex
                                 rounded-full
@@ -77,13 +77,13 @@ export default function VehicleCard({
                                 font-medium
                                 text-blue-700
                             "
-                        >
-                            {vehicle.category}
-                        </span>
-                    </div>
+            >
+              {vehicle.category}
+            </span>
+          </div>
 
-                    <div
-                        className="
+          <div
+            className="
                             shrink-0
                             rounded-xl
                             bg-green-100
@@ -93,46 +93,46 @@ export default function VehicleCard({
                             font-bold
                             text-green-700
                         "
-                    >
-                        {formattedPrice}
-                    </div>
-                </div>
-            </div>
+          >
+            {formattedPrice}
+          </div>
+        </div>
+      </div>
 
-            <div
-                className="
+      <div
+        className="
                     mt-8
                     border-t
                     pt-5
                     space-y-4
                 "
-            >
-                <div
-                    className="
+      >
+        <div
+          className="
                         flex
                         items-center
                         justify-between
                     "
-                >
-                    <div>
-                        <p className="text-sm text-gray-500">Stock</p>
+        >
+          <div>
+            <p className="text-sm text-gray-500">Stock</p>
 
-                        <p
-                            className={`
+            <p
+              className={`
                                 text-lg
                                 font-bold
                                 ${vehicle.quantity === 0 ? 'text-red-600' : 'text-green-600'}
                             `}
-                        >
-                            {vehicle.quantity}
-                        </p>
-                    </div>
+            >
+              {vehicle.quantity}
+            </p>
+          </div>
 
-                    <button
-                        type="button"
-                        disabled={vehicle.quantity === 0 || isPurchasing || isDeleting}
-                        onClick={() => onPurchase(vehicle.id)}
-                        className="
+          <button
+            type="button"
+            disabled={vehicle.quantity === 0 || isPurchasing || isDeleting}
+            onClick={() => onPurchase(vehicle.id)}
+            className="
                             rounded-xl
                             bg-blue-600
                             px-5
@@ -145,18 +145,18 @@ export default function VehicleCard({
                             disabled:cursor-not-allowed
                             disabled:bg-gray-300
                         "
-                    >
-                        {isPurchasing ? 'Purchasing...' : vehicle.quantity === 0 ? 'Out of Stock' : 'Purchase'}
-                    </button>
-                </div>
+          >
+            {isPurchasing ? 'Purchasing...' : vehicle.quantity === 0 ? 'Out of Stock' : 'Purchase'}
+          </button>
+        </div>
 
-                {isAdmin && (
-                    <div className="flex flex-wrap gap-3">
-                        <button
-                            type="button"
-                            disabled={isDeleting}
-                            onClick={() => navigate(`/vehicles/${vehicle.id}/edit`)}
-                            className="
+        {isAdmin && (
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              disabled={isDeleting}
+              onClick={() => navigate(`/vehicles/${vehicle.id}/edit`)}
+              className="
                 rounded-lg
                 bg-amber-500
                 px-4
@@ -167,15 +167,15 @@ export default function VehicleCard({
                 transition
                 hover:bg-amber-600
             "
-                        >
-                            Edit
-                        </button>
+            >
+              Edit
+            </button>
 
-                        <button
-                            disabled={isDeleting}
-                            type="button"
-                            onClick={() => navigate(`/vehicles/${vehicle.id}/restock`)}
-                            className="
+            <button
+              disabled={isDeleting}
+              type="button"
+              onClick={() => navigate(`/vehicles/${vehicle.id}/restock`)}
+              className="
         rounded-lg
         bg-green-600
         px-4
@@ -186,15 +186,15 @@ export default function VehicleCard({
         transition
         hover:bg-green-700
     "
-                        >
-                            Restock
-                        </button>
+            >
+              Restock
+            </button>
 
-                        <button
-                            type="button"
-                            disabled={isDeleting}
-                            onClick={onDelete}
-                            className="
+            <button
+              type="button"
+              disabled={isDeleting}
+              onClick={onDelete}
+              className="
         rounded-lg
         bg-red-600
         px-4
@@ -205,12 +205,12 @@ export default function VehicleCard({
         hover:bg-red-700
         disabled:bg-gray-300
     "
-                        >
-                            {isDeleting ? 'Deleting...' : 'Delete'}
-                        </button>
-                    </div>
-                )}
-            </div>
-        </article>
-    );
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </button>
+          </div>
+        )}
+      </div>
+    </article>
+  );
 }

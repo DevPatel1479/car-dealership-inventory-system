@@ -19,54 +19,54 @@ import NotFoundPage from './NotFoundPage';
 import VehicleCreatePage from '../features/vehicles/pages/VehicleCreatePage';
 
 export default function AppRouter() {
-    return (
-        <Routes>
-            {/* PUBLIC ROUTES */}
+  return (
+    <Routes>
+      {/* PUBLIC ROUTES */}
 
-            <Route
-                path="/"
-                element={
-                    <PublicRoute>
-                        <LandingPage />
-                    </PublicRoute>
-                }
-            />
+      <Route
+        path="/"
+        element={
+          <PublicRoute>
+            <LandingPage />
+          </PublicRoute>
+        }
+      />
 
-            <Route
-                path="/login"
-                element={
-                    <PublicRoute>
-                        <LoginPage />
-                    </PublicRoute>
-                }
-            />
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        }
+      />
 
-            <Route
-                path="/register"
-                element={
-                    <PublicRoute>
-                        <RegisterPage />
-                    </PublicRoute>
-                }
-            />
+      <Route
+        path="/register"
+        element={
+          <PublicRoute>
+            <RegisterPage />
+          </PublicRoute>
+        }
+      />
 
-            {/* USER + ADMIN ROUTES */}
+      {/* USER + ADMIN ROUTES */}
 
-            <Route element={<ProtectedRoute />}>
-                <Route path="/vehicles" element={<VehiclesPage />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/vehicles" element={<VehiclesPage />} />
 
-                {/* ADMIN ONLY */}
+        {/* ADMIN ONLY */}
 
-                <Route element={<AdminRoute />}>
-                    <Route path="/vehicles/create" element={<VehicleCreatePage />} />
+        <Route element={<AdminRoute />}>
+          <Route path="/vehicles/create" element={<VehicleCreatePage />} />
 
-                    <Route path="/vehicles/:id/edit" element={<VehicleEditPage />} />
+          <Route path="/vehicles/:id/edit" element={<VehicleEditPage />} />
 
-                    <Route path="/vehicles/:id/restock" element={<VehicleRestockPage />} />
-                </Route>
-            </Route>
+          <Route path="/vehicles/:id/restock" element={<VehicleRestockPage />} />
+        </Route>
+      </Route>
 
-            <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-    );
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  );
 }

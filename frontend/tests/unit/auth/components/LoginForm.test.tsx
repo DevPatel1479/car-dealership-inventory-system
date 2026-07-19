@@ -18,9 +18,7 @@ describe('LoginForm', () => {
   it('should render the password input', () => {
     render(<LoginForm />);
 
-    expect(
-      screen.getByLabelText(/password/i),
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
   });
 
   it('should render the login button', () => {
@@ -46,10 +44,7 @@ describe('LoginForm', () => {
       'john@example.com',
     );
 
-    await user.type(
-      screen.getByLabelText(/password/i),
-      'password123',
-    );
+    await user.type(screen.getByLabelText(/password/i), 'password123');
 
     await user.click(
       screen.getByRole('button', {
@@ -68,9 +63,7 @@ describe('LoginForm', () => {
 
     const onSubmit = vi.fn();
 
-    render(
-      <LoginForm onSubmit={onSubmit} />,
-    );
+    render(<LoginForm onSubmit={onSubmit} />);
 
     await user.click(
       screen.getByRole('button', {
@@ -78,26 +71,17 @@ describe('LoginForm', () => {
       }),
     );
 
-    expect(
-      screen.getByText(
-        /email and password are required/i,
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/email and password are required/i)).toBeInTheDocument();
 
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-
   it('should disable login button while submitting credentials', async () => {
     const user = userEvent.setup();
 
-    const onSubmit = vi.fn(
-      () => new Promise(() => { }),
-    );
+    const onSubmit = vi.fn(() => new Promise(() => {}));
 
-    render(
-      <LoginForm onSubmit={onSubmit} />,
-    );
+    render(<LoginForm onSubmit={onSubmit} />);
 
     await user.type(
       screen.getByRole('textbox', {
@@ -106,10 +90,7 @@ describe('LoginForm', () => {
       'john@example.com',
     );
 
-    await user.type(
-      screen.getByLabelText(/password/i),
-      'password123',
-    );
+    await user.type(screen.getByLabelText(/password/i), 'password123');
 
     await user.click(
       screen.getByRole('button', {
@@ -123,5 +104,4 @@ describe('LoginForm', () => {
       }),
     ).toBeDisabled();
   });
-
 });

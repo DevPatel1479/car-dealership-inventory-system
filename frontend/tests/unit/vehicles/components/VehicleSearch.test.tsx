@@ -1,98 +1,31 @@
-import {
-    describe,
-    expect,
-    it,
-    vi,
-} from 'vitest';
-
-
-import {
-    render,
-    screen,
-    fireEvent,
-} from '@testing-library/react';
-
+import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import VehicleSearch from '../../../../src/features/vehicles/components/VehicleSearch';
 
+describe('VehicleSearch', () => {
+  it('should submit the make filter', () => {
+    const onSearch = vi.fn();
 
-import * as vehicleApi from '../../../../src/features/vehicles/api/vehicle.api';
+    render(<VehicleSearch onSearch={onSearch} />);
 
+    fireEvent.change(
+      screen.getByPlaceholderText('Make'),
+      {
+        target: {
+          value: 'Toyota',
+        },
+      },
+    );
 
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: /search vehicles/i,
+      }),
+    );
 
-describe('VehicleSearch Component', () => {
-
-
-    it('should search vehicles by make', async () => {
-
-
-        const searchSpy =
-            vi.spyOn(
-                vehicleApi,
-                'searchVehicles',
-            )
-                .mockResolvedValue([
-                    {
-                        id: '1',
-                        make: 'Toyota',
-                        model: 'Camry',
-                        category: 'Sedan',
-                        price: 25000,
-                        quantity: 5,
-                    },
-                ]);
-
-
-
-        render(
-            <VehicleSearch />,
-        );
-
-
-
-        const input =
-            screen.getByPlaceholderText(
-                'Search by make',
-            );
-
-
-
-        fireEvent.change(
-            input,
-            {
-                target: {
-                    value: 'Toyota',
-                },
-            },
-        );
-
-
-
-        const button =
-            screen.getByRole(
-                'button',
-                {
-                    name: 'Search',
-                },
-            );
-
-
-
-        fireEvent.click(
-            button,
-        );
-
-
-
-        expect(
-            searchSpy,
-        )
-            .toHaveBeenCalledWith({
-                make: 'Toyota',
-            });
-
-
+    expect(onSearch).toHaveBeenCalledWith({
+      make: 'Toyota',
     });
-
-
+  });
 });
