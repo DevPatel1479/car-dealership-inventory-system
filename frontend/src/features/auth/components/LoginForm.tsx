@@ -1,10 +1,12 @@
 import { useState } from 'react';
 
 interface LoginFormProps {
-  onSubmit?: (credentials: {
-    email: string;
-    password: string;
-  }) => void;
+  onSubmit?: (
+    credentials: {
+      email: string;
+      password: string;
+    },
+  ) => Promise<unknown> | void;
 }
 
 export function LoginForm({
@@ -13,26 +15,29 @@ export function LoginForm({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(
+  async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
 
     if (!email || !password) {
-      setError(
-        'Email and password are required',
-      );
-
+      setError('Email and password are required');
       return;
     }
 
     setError('');
+    setIsSubmitting(true);
 
-    onSubmit?.({
-      email,
-      password,
-    });
+    try {
+      await onSubmit?.({
+        email,
+        password,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -71,8 +76,11 @@ export function LoginForm({
         </p>
       )}
 
-      <button type="submit">
-        Login
+      <button
+        type="submit"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 'Logging in...' : 'Login'}
       </button>
     </form>
   );
