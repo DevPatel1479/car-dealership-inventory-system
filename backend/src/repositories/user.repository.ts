@@ -38,6 +38,7 @@ export class UserRepository implements IUserRepository {
     }
 
     return {
+      id : user._id.toString(),
       name: user.name,
       email: user.email,
       password: user.password,
