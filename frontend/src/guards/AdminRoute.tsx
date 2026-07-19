@@ -1,0 +1,1 @@
+// Restricts access to administrator-only routes.

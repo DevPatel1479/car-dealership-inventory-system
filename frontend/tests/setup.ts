@@ -1,0 +1,1 @@
+// Global test configuration for Vitest and React Testing Library.
