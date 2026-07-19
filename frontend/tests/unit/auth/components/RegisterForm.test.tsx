@@ -24,4 +24,12 @@ describe('RegisterForm', () => {
         ).toBeInTheDocument();
     });
 
+    it('should render the password input', () => {
+        render(<RegisterForm />);
+
+        expect(
+            screen.getByLabelText(/password/i),
+        ).toBeInTheDocument();
+    });
+
 });
