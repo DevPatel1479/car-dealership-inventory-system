@@ -63,5 +63,28 @@ describe('LoginForm', () => {
     });
   });
 
+  it('should show validation error when submitting empty credentials', async () => {
+    const user = userEvent.setup();
+
+    const onSubmit = vi.fn();
+
+    render(
+      <LoginForm onSubmit={onSubmit} />,
+    );
+
+    await user.click(
+      screen.getByRole('button', {
+        name: /login/i,
+      }),
+    );
+
+    expect(
+      screen.getByText(
+        /email and password are required/i,
+      ),
+    ).toBeInTheDocument();
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
 
 });
