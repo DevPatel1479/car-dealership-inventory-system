@@ -1,4 +1,12 @@
+import {
+    useNavigate,
+} from 'react-router-dom';
+
+
 export default function LandingPage() {
+
+    const navigate =
+        useNavigate();
 
     return (
 
@@ -13,6 +21,7 @@ export default function LandingPage() {
                 <button
                     type="button"
                     className="rounded bg-blue-600 px-6 py-2 text-white"
+                    onClick={() => navigate('/login')}
                 >
                     Login
                 </button>
