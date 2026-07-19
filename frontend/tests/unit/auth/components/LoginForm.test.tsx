@@ -13,4 +13,13 @@ describe('LoginForm', () => {
       }),
     ).toBeInTheDocument();
   });
+
+  it('should render the password input', () => {
+    render(<LoginForm />);
+
+    expect(
+      screen.getByLabelText(/password/i),
+    ).toBeInTheDocument();
+  });
+
 });
